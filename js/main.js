@@ -7,7 +7,7 @@ const MIN_INDEX_MESSAGES = 0;
 const MAX_INDEX_MESSAGES = 6;
 const MIN_INDEX_USER_AVATAR = 0;
 const MIN_INDEX_USER_NAME = 0;
-
+const MAX_SHOW_MINIATURS_NUMBER = 25;
 const MESSAGES = [
     'Все отлично!',
     'В целом всё неплохо. Но не всё.',
@@ -59,25 +59,46 @@ const USER_AVATARS = [
     'img/avatar-5.svg',
     'img/avatar-6.svg'
 ];
-const PictureData = [];
-const getRandomIntegerFromRange = (maxValue, minValue) => {
+const PictureData = []; ///создание пустого массива 
+
+const clearStructuresOfElements = document.createElement(pictures); ///<=создние дом-элемента
+///или все же лучше через перезапись? const clearStructuresOfElements=(element)=>{eleent.innerHTML="";}
+const showElement = (element) => {
+    element.classList.remove('hidden') ///<=удаление класса hidden
+}
+
+const corkElement = (element) => {
+    element.classlist.add('hidden'); ///<= заполнение класса hidden
+};
+
+const getRandomIntegerFromRange = (maxValue, minValue) => { ///получить случайное целое число из диапазона
     return Math.floor(Math.random() * (maxValue - minValue)) + minValue;
 }
-const getRandomElementFromArray = (array, minValue = 0, maxValue = array.length - 1) => {
+const getRandomElementFromArray = (array, minValue = 0, maxValue = array.length - 1) => { ///получить случайное число из массива
     return array[getRandomIntegerFromRange(maxValue, minValue)];
 }
-const generatePictureData = () => {
+const generatePictureData = () => { ///создания массива для генерации с обЪектами
     const generateCommentsData = () => {
-        const commentsDate = [];
+        const commentsData = [];
         const randomQuantityComments = getRandomIntegerFromRange(MIN_COMMENTS_NUMBER, MAX_COMMENTS_NUMBER);
         for (let index = 0; index < randomQuantityComments; index++) {
-            commentsIndex.push({
+            commentsData.push({
                 avatar: getRandomElementFromArray(MIN_INDEX_USER_AVATAR, USER_AVATARS),
                 message: getRandomElementFromArray(MIN_INDEX_MESSAGES, MESSAGES),
                 name: getRandomElementFromArray(MIN_INDEX_USER_NAME, USER_NAMES),
             })
         }
+        return commentsData;
     }
+    for (let index = 0; index < MAX_SHOW_MINIATURS_NUMBER; index++) {
+        pictureData.push({
+            comments: generateCommentsData(),
+            likes: getRandomIntegerFromRange(MIN_LIKES_NUMBER, MAX_LIKES_NUMBER),
+            image: PHOTO_URLS
+
+        })
+    }
+
 };
 const getRandomElementFromArray = (array, minValue = 0, maxValue = array.length - 1) => {
     return array[getRandomIntegerFromRange(maxValue, minValue)];
