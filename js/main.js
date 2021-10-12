@@ -1,10 +1,14 @@
+
 'use strict';
+ 
 const MAX_LIKES_NUMBER = 200;
 const MIN_LIKES_NUMBER = 15;
 const MAX_COMMENTS_NUMBER = 21;
 const MIN_COMMENTS_NUMBER = 7;
 const MAX_INDEX_MESSAGES = 6;
 const MAX_SHOW_MINIATURS_NUMBER = 25;
+const MIN_INDEX_AVATAR=0;
+const MIN_INDEX_NAME=0;
 
 const MESSAGES = [
     'Все отлично!',
@@ -57,143 +61,94 @@ const USER_AVATARS = [
     'img/avatar-5.svg',
     'img/avatar-6.svg'
 ];
-const рicturesData = []; ///создание пустого массива 
+const DESCRIPTION=[
+  'Какое чудесное фото.Nikkon с каждым разом поражает своими иновациями',
+  'Все зависит от объектива и снаровки фотографа.А параметры фотоаппарата не сильно важны.',
+  'Cannon дает хорошую картинку на портретных объективах.Неплохая картинка получается на советских объективах',
+  'Все же большую роль играет хороший свет на фоне.Не всегда редакторами все сделаешь.',
+  'Полагаю Sony может в будущем удивить нас своими возможностями',
+]
 
-const clearStructuresOfElements = (element) => { element.innerHTML = ""; } //удаление содержимого элемента
+const picturesData=[];
 
-const showElement = (element) => {
-    element.classList.remove('hidden') ///<=удаление класса hidden
-}
-
-const deleteElement = (element) => {
-    element.classlist.add('hidden'); ///<= заполнение класса hidden
+const clearContentsElement=(element)=>{
+  element.innerHTML='' 
+};
+const getRandomIntegerFromRange=(minValue,maxValue)=>{
+  return Math.floor(Math.random()*(maxValue-minValue+1)+minValue)
+};
+const getRandomIntegerFromArray=(array,minValue=0,maxValue=array.lenght-1)=>{
+  return array[getRandomIntegerFromRange(maxValue,minValue)]
 };
 
-const getRandomIntegerFromRange = (maxValue, minValue) => { ///получить случайное целое число из диапазона
-    return Math.floor(Math.random() * (maxValue - minValue) + minValue);
+const  generatePicturesData=()=>{
+  const generateCommentsData=()=>{
+    const commentsData=[];
+    const randomIntergerComments=getRandomIntegerFromRange(MIN_COMMENTS_NUMBER,MAX_COMMENTS_NUMBER);
+    for (let index=0;index<randomIntergerComments;index++){
+      commentsData.push({
+        avatar:getRandomIntegerFromArray(USER_AVATARS,MIN_INDEX_AVATAR),
+        message:getRandomIntegerFromArray(MESSAGES, MAX_INDEX_MESSAGES),
+        name:getRandomIntegerFromArray(USER_NAMES,MIN_INDEX_NAME)
+      })
+
+    }return commentsData;
+  }
+  for(let index=0;index<MAX_SHOW_MINIATURS_NUMBER;index++){
+    picturesData.push({
+      comment:generateCommentsData(),
+      like:getRandomIntegerFromRange(MAX_LIKES_NUMBER,MIN_LIKES_NUMBER),
+      image:PHOTOS_URLS[index]
+    })
 }
-
-const getRandomElementFromArray = (array, minValue = 0, maxValue = array.length - 1) => { ///получить случайное число из массива
-    return array[getRandomIntegerFromRange(maxValue, minValue)];
 }
-
-const generateCommentsData = () => {
-    const commentsData = [];
-    const randomQuantityComments = getRandomIntegerFromRange(MIN_COMMENTS_NUMBER, MAX_COMMENTS_NUMBER);
-    for (let index = 0; index < randomQuantityComments; index++) {
-        commentsData.push({
-            avatar: getRandomElementFromArray(0, USER_AVATARS),
-            message: getRandomElementFromArray(0, MESSAGES),
-            name: getRandomElementFromArray(0, USER_NAMES),
-        })
-    }
-    return commentsData;
-}
-
-const generatePicturesData = () => { ///создания массива для генерации с обЪектами
-    generateCommentsData();
-    for (let index = 0; index < MAX_SHOW_MINIATURS_NUMBER; index++) {
-        picturesData.push({
-            comments: generateCommentsData(),
-            likes: getRandomIntegerFromRange(MIN_LIKES_NUMBER, MAX_LIKES_NUMBER),
-            image: PHOTOS_URLS[index]
-        })
-    }
-
-};
 const renderAllPictures = () => {
-    const creatPicture = (picture, index) => {
-        const picturesTemplate = document.querySelector('#picture').textContent.document.querySelector('.picture');
+  const picturesContainer = document.querySelector(".pictures");
+  const fragment = document.createDocumentFragment(); 
+  const pictureTemplate = document.querySelector("#picture").content.querySelector(".picture");
 
-        const image = picturesTemplate.cloneNode(true);
+  const createPicture = (picture, index) => {
+    const image =pictureTemplate.cloneNode(true);
+    image.querySelector(".picture__comments").textContent = picture.comments;
+    image.querySelector(".picture__likes").textContent = picture.likes;
+    image.querySelector(".picture__img").src = picture.image;
+    return image;
+  }
+  picturesData.forEach((picture, index) => {
+    fragment.append(createPicture(picture, index));
+  });
 
-        image.querySelector(".picture__comments").textContent = picture.comments.length;
-        image.querySelector("picture__likes").textContent = picture.likes;
-        image.querySelector("picture__img").src = piture.image;
-        return image;
-    }
-    const picturesContainer = document.querySelector(".picture");
-    const picturesFragment = document.createDocumentFragment();
-
-    picturesData.forEach((picture, index) => {
-        picturesFragment.append(creatPicture(picture, index));
-
-    });
-    picturesContainer.append(picturesFragment);
-
-    const setPicturesClickListeners = () => {
-        const miniatures = picturesContainer.querySelectorAll(".picture__img");
-
-        miniatures.forEach((evt) => {
-            evt.addEventListener("click", handlePictureClick)
-        });
-
-    }
-    setPicturesClickListeners();
-};
-const renderBigPictures = (pictureID) => {
-    const bigPicture = document.querySelector(".big-picture");
-
-    const assinDataForBigPicture = () => {
-        bigPicture.querySelector(".big-picture__img img").src = picturesData[pictureID].image;
-        bigPicture.querySelector(".comments-count").textContent = picturesData[pictureID].comments.length;
-        bigPicture.querySelector("social__caaption").textContent = picturesData[pictureID].description;
-        bigPicture.querySelector(".like-count").textContent = picturesData[pictureID].likes;
-    }
-    const renderCommentsForBigPicture = (pictureID) => {
-        const commentlist = bigPicture.querySelector(".social__comments");
-        clearContentsOfElement(commentList);
-        const creatComments = (pictureID) => {
-            const fragment = newDocumentFragment();
-            const createCommentWrapper = (index) => {
-                const creatComment = () => {
-
-                    const newComment = document.createElement("li");
-                    newComment.classList.add("social_comment");
-                    return newComment;
-                }
-                const createAvatar = () => {
-                    const avatarElement = document.createElement("img");
-                    avatarElement.classList.add("social__picture");
-                    avatarElement.src = picturesData[pictureID].comments[index].avatar;
-                    return avatarElement;
-                }
-                const createMessage = () => {
-                    const massageElement = document.createElement("p");
-                    messageElement.classList.add("social__text");
-                    messageElement.textContent = picturesData[pictureID].comments[index].message;
-                    return messageElement;
-                }
-
-                const comment = createComment();
-                comment.append(createAvatar(), createMessage());
-                return comment;
-            }
-            const maxShowCommentCount = Math.min(pictureData[pictureID].comments.length, MAX_COMMENTS_NUMBER);
-            for (let index = 0; index < maxShowCommentCount; index++) {
-                fragment.append(createCommentWrapper(index));
-            }
-            return fragment;
-        }
-        commentList.append(createComments(pictureID));
-    }
-    renderCommentsForBigPicture(pictureID);
-    assinDataForBigPicture();
-    showElement(bigPicture);
-    const removePicturesClickListeners = () => {
-        const miniatures = document.querySelectorAll(".picture__img");
-        miniatures.forEach((evt) => {
-            evt.removeEventListener("click", handlePictureClick)
-        });
-    }
-    removePicturesClickListeners();
+  picturesContainer.append(fragment);  
+  const miniaturs = document.querySelectorAll(".picture");
+  const setPicturesClickListeners = () => {
+    const miniaturs = picturesContainer.querySelectorAll(".picture__img");    
+ }
 }
-const handlePictureClick = (evt) => {
-    document.querySelector(".social__comment-count").classList.add("visually-hidden");
-    document.querySelector(".comments-loader").classList.add("visually-hidden");
-    const pictureID = evt.currentTarget.parentNode.getAttribute("data-number");
-    renderBigPictures(pictureID);
-
+const BigPicture=document.querySelector('.big-picture')
+const renderBigPicture=(pictureID)=>{
+  ///BigPicture.classList.remove('hidden')
+  const dataForBigPicture=()=>{
+    BigPicture.querySelector('.big-picture__img').src=picturesData[pictureID].image;
+    BigPicture.querySelector('.likes-count').textContent=picturesData[pictureID].likes;
+    BigPicture.querySelector('.comments-count').textContent=picturesData[pictureID].comments.lenght;
+    BigPicture.querySelector('.social__caption').textContent=picturesData[pictureID].description
+  }
+  const renderCommentsFromBigPicture=(pictureID)=>{
+    const commentList=bigPicture.querySelector('.social__comment');
+    clearContentsElement(commentList);
+    const newComments=(picureID)=>{
+      const creatNewComments=new DocumentFragment();
+       const creatComment=(index)=>{
+         const someNewElement=()=>{
+           const commentElement=document.createElement('li');
+           commentElement.classList.add('social__comment');
+           return commentElement;
+         }
+       }
+    }
 }
+}
+///BigPicture.classList.add('hidden')
+
 generatePicturesData();
 renderAllPictures();
