@@ -80,20 +80,19 @@ const getRandomIntegerFromRange=(minValue,maxValue)=>{
 const getRandomIntegerFromArray=(array,minValue=0,maxValue=array.lenght-1)=>{
   return array[getRandomIntegerFromRange(maxValue,minValue)]
 };
+const commentsData=[];
+const generateCommentsData=()=>{
+  const randomIntergerComments=getRandomIntegerFromRange(MIN_COMMENTS_NUMBER,MAX_COMMENTS_NUMBER);
+  for (let index=0;index<randomIntergerComments;index++){
+    commentsData.push({
+      avatar:getRandomIntegerFromArray(USER_AVATARS,MIN_INDEX_AVATAR),
+      message:getRandomIntegerFromArray(MESSAGES, MAX_INDEX_MESSAGES),
+      name:getRandomIntegerFromArray(USER_NAMES,MIN_INDEX_NAME)
+    })
+  }return commentsData;
+}
 
 const  generatePicturesData=()=>{
-  const generateCommentsData=()=>{
-    const commentsData=[];
-    const randomIntergerComments=getRandomIntegerFromRange(MIN_COMMENTS_NUMBER,MAX_COMMENTS_NUMBER);
-    for (let index=0;index<randomIntergerComments;index++){
-      commentsData.push({
-        avatar:getRandomIntegerFromArray(USER_AVATARS,MIN_INDEX_AVATAR),
-        message:getRandomIntegerFromArray(MESSAGES, MAX_INDEX_MESSAGES),
-        name:getRandomIntegerFromArray(USER_NAMES,MIN_INDEX_NAME)
-      })
-
-    }return commentsData;
-  }
   for(let index=0;index<MAX_SHOW_MINIATURS_NUMBER;index++){
     picturesData.push({
       comment:generateCommentsData(),
@@ -101,12 +100,12 @@ const  generatePicturesData=()=>{
       image:PHOTOS_URLS[index]
     })
 }
-}
-const renderAllPictures = () => {
-  const picturesContainer = document.querySelector(".pictures");
-  const fragment = document.createDocumentFragment(); 
-  const pictureTemplate = document.querySelector("#picture").content.querySelector(".picture");
+} 
 
+const picturesContainer = document.querySelector(".pictures");
+const fragment = document.createDocumentFragment(); 
+const pictureTemplate = document.querySelector("#picture").content.querySelector(".picture");
+const renderAllPictures = () => {
   const createPicture = (picture, index) => {
     const image =pictureTemplate.cloneNode(true);
     image.querySelector(".picture__comments").textContent = picture.comments;
@@ -117,12 +116,7 @@ const renderAllPictures = () => {
   picturesData.forEach((picture, index) => {
     fragment.append(createPicture(picture, index));
   });
-
   picturesContainer.append(fragment);  
-  const miniaturs = document.querySelectorAll(".picture");
-  const setPicturesClickListeners = () => {
-    const miniaturs = picturesContainer.querySelectorAll(".picture__img");    
- }
 }
 const BigPicture=document.querySelector('.big-picture')
 const renderBigPicture=(pictureID)=>{
@@ -152,3 +146,4 @@ const renderBigPicture=(pictureID)=>{
 
 generatePicturesData();
 renderAllPictures();
+renderBigPicture();
