@@ -9,6 +9,7 @@ const MAX_INDEX_MESSAGES = 6;
 const MAX_SHOW_MINIATURS_NUMBER = 25;
 const MIN_INDEX_AVATAR=0;
 const MIN_INDEX_NAME=0;
+const MIN_INDEX_DESCRIPTION=0;
 
 const MESSAGES = [
     'Все отлично!',
@@ -18,6 +19,7 @@ const MESSAGES = [
     'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
     'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
+
 const PHOTOS_URLS = [
     'photos/1.jpg',
     'photos/2.jpg',
@@ -45,6 +47,7 @@ const PHOTOS_URLS = [
     'photos/24.jpg',
     'photos/25.jpg',
 ];
+
 const USER_NAMES = [
     'Виктория',
     'Артем',
@@ -52,7 +55,8 @@ const USER_NAMES = [
     'Александра',
     'Валерия',
     'Анстасия'
-];
+]; 
+
 const USER_AVATARS = [
     'img/avatar-1.svg',
     'img/avatar-2.svg',
@@ -61,7 +65,8 @@ const USER_AVATARS = [
     'img/avatar-5.svg',
     'img/avatar-6.svg'
 ];
-const DESCRIPTION=[
+
+const DESCRIPTIONS=[
   'Какое чудесное фото.Nikkon с каждым разом поражает своими иновациями',
   'Все зависит от объектива и снаровки фотографа.А параметры фотоаппарата не сильно важны.',
   'Cannon дает хорошую картинку на портретных объективах.Неплохая картинка получается на советских объективах',
@@ -70,79 +75,91 @@ const DESCRIPTION=[
 ]
 
 const picturesData=[];
+const commentsData=[];
 
-const clearContentsElement=(element)=>{
+const clearElementContents=(element) => {
   element.innerHTML='' 
 };
-const getRandomIntegerFromRange=(minValue,maxValue)=>{
-  return Math.floor(Math.random()*(maxValue-minValue+1)+minValue)
-};
-const getRandomIntegerFromArray=(array,minValue=0,maxValue=array.lenght-1)=>{
-  return array[getRandomIntegerFromRange(maxValue,minValue)]
-};
-const commentsData=[];
-const generateCommentsData=()=>{
-  const randomIntergerComments=getRandomIntegerFromRange(MIN_COMMENTS_NUMBER,MAX_COMMENTS_NUMBER);
-  for (let index=0;index<randomIntergerComments;index++){
-    commentsData.push({
-      avatar:getRandomIntegerFromArray(USER_AVATARS,MIN_INDEX_AVATAR),
-      message:getRandomIntegerFromArray(MESSAGES, MAX_INDEX_MESSAGES),
-      name:getRandomIntegerFromArray(USER_NAMES,MIN_INDEX_NAME)
-    })
-  }return commentsData;
+
+const getRandomIntegerFromRange=(minValue, maxValue) => {
+  return Math.floor(Math.random() * (maxValue - minValue)) + minValue;
 }
 
-const  generatePicturesData=()=>{
-  for(let index=0;index<MAX_SHOW_MINIATURS_NUMBER;index++){
-    picturesData.push({
-      comment:generateCommentsData(),
-      like:getRandomIntegerFromRange(MAX_LIKES_NUMBER,MIN_LIKES_NUMBER),
-      image:PHOTOS_URLS[index]
-    })
+const getRandomElementFromArray=(array, minValue=0, maxValue=array.length-1) => {
+  return array[getRandomIntegerFromRange(maxValue, minValue)];
 }
+
+
+const generateCommentsData= () => {
+  const commentsCount=getRandomIntegerFromRange(MAX_COMMENTS_NUMBER, MIN_COMMENTS_NUMBER);
+  
+  for (let index = 0; index < commentsCount; index++) {
+    commentsData.push({
+      avatar: getRandomElementFromArray(USER_AVATARS, MIN_INDEX_AVATAR),
+      message: getRandomElementFromArray(MESSAGES, MAX_INDEX_MESSAGES),
+      name: getRandomElementFromArray(USER_NAMES, MIN_INDEX_NAME)
+    })
+  }
+  return commentsData;
+}
+
+const  generatePicturesData = () => {
+  for(let index = 0; index < MAX_SHOW_MINIATURS_NUMBER; index++) {
+    picturesData.push({
+      comments: generateCommentsData(),
+      likes: getRandomIntegerFromRange(MAX_LIKES_NUMBER, MIN_LIKES_NUMBER),
+      image: PHOTOS_URLS[index],
+      description: getRandomIntegerFromRange(DESCRIPTIONS, MIN_INDEX_DESCRIPTION)
+    })
+  }
 } 
 
-const picturesContainer = document.querySelector(".pictures");
-const fragment = document.createDocumentFragment(); 
-const pictureTemplate = document.querySelector("#picture").content.querySelector(".picture");
 const renderAllPictures = () => {
+  const picturesContainer = document.querySelector(".pictures");
+  const fragment = document.createDocumentFragment(); 
+  const pictureTemplate = document.querySelector("#picture").content.querySelector(".picture");
+ 
   const createPicture = (picture, index) => {
     const image =pictureTemplate.cloneNode(true);
-    image.querySelector(".picture__comments").textContent = picture.comments;
+
+    image.querySelector(".picture__comments").textContent = picture.comments.length;
     image.querySelector(".picture__likes").textContent = picture.likes;
     image.querySelector(".picture__img").src = picture.image;
+
     return image;
   }
   picturesData.forEach((picture, index) => {
     fragment.append(createPicture(picture, index));
   });
+
   picturesContainer.append(fragment);  
 }
-const BigPicture=document.querySelector('.big-picture')
-const renderBigPicture=(pictureID)=>{
-  ///BigPicture.classList.remove('hidden')
-  const dataForBigPicture=()=>{
-    BigPicture.querySelector('.big-picture__img').src=picturesData[pictureID].image;
-    BigPicture.querySelector('.likes-count').textContent=picturesData[pictureID].likes;
-    BigPicture.querySelector('.comments-count').textContent=picturesData[pictureID].comments.lenght;
-    BigPicture.querySelector('.social__caption').textContent=picturesData[pictureID].description
+
+const renderBigPicture= (pictureID) => {
+  const bigPicture=document.querySelector('.big-picture')
+  ///bigPicture.classList.remove('hidden')
+
+  const dataForBigPicture = () => {
+    bigPicture.querySelector('.big-picture__img').src=picturesData[pictureID].image;
+    bigPicture.querySelector('.likes-count').textContent=picturesData[pictureID].likes;
+    bigPicture.querySelector('.comments-count').textContent=picturesData[pictureID].comments.length;
+    bigPicture.querySelector('.social__caption').textContent=picturesData[pictureID].description;
   }
-  const renderCommentsFromBigPicture=(pictureID)=>{
+
+  const renderComments = (pictureID) => {
     const commentList=bigPicture.querySelector('.social__comment');
-    clearContentsElement(commentList);
-    const newComments=(picureID)=>{
-      const creatNewComments=new DocumentFragment();
-       const creatComment=(index)=>{
-         const someNewElement=()=>{
-           const commentElement=document.createElement('li');
-           commentElement.classList.add('social__comment');
-           return commentElement;
-         }
-       }
+    clearElementContents(commentList);
+
+    const createCommentWrapper = (index) => {
+      const createComment = () => {
+        const newComment = document.createElement('li');
+        newComment.classList.add('social_comment');
+
+        return newComment;
+      }
     }
 }
 }
-///BigPicture.classList.add('hidden')
 
 generatePicturesData();
 renderAllPictures();
