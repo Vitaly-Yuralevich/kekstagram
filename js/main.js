@@ -6,9 +6,10 @@ const MAX_COMMENTS_NUMBER = 21;
 const MIN_COMMENTS_NUMBER = 7;
 const MAX_INDEX_MESSAGES = 6;
 const MAX_SHOW_MINIATURS_NUMBER = 25;
-const MIN_INDEX_AVATAR=0;
-const MIN_INDEX_NAME=0;
-const MIN_INDEX_DESCRIPTION=0;
+const MAX_SHOW_COMMENTS_COUNT = 5;
+const MIN_INDEX_AVATAR = 0;
+const MIN_INDEX_NAME = 0;
+const MIN_INDEX_DESCRIPTION = 0;
 
 const MESSAGES = [
     'Все отлично!',
@@ -65,45 +66,45 @@ const USER_AVATARS = [
     'img/avatar-6.svg'
 ];
 
-const DESCRIPTIONS=[
+const DESCRIPTIONS = [
   'Какое чудесное фото.Nikkon с каждым разом поражает своими иновациями',
   'Все зависит от объектива и снаровки фотографа.А параметры фотоаппарата не сильно важны.',
   'Cannon дает хорошую картинку на портретных объективах.Неплохая картинка получается на советских объективах',
   'Все же большую роль играет хороший свет на фоне.Не всегда редакторами все сделаешь.',
   'Полагаю Sony может в будущем удивить нас своими возможностями',
-]
+];
 
-const picturesData=[];
-const commentsData=[];
+const picturesData = [];
 
 const clearElementContents=(element) => {
-  element.innerHTML='' 
+  element.innerHTML = '' 
 };
 
-const showElement = (element) => {
-  element.classList.remove('hidden')
-};
+const getRandomIntegerFromRange = (minValue, maxValue) => {
 
-const getRandomIntegerFromRange=(minValue, maxValue) => {
   return Math.floor(Math.random() * (maxValue - minValue)) + minValue;
 };
 
-const getRandomElementFromArray=(array, minValue=0, maxValue=array.length-1) => {
-  return array[getRandomIntegerFromRange(maxValue, minValue)];
+const getRandomElementFromArray = (array, minValue = 0, maxValue = array.length - 1) => {
+
+  return array[getRandomIntegerFromRange(minValue, maxValue)];
 };
 
 
-const generateCommentsData= () => {
-  const commentsCount=getRandomIntegerFromRange(MAX_COMMENTS_NUMBER, MIN_COMMENTS_NUMBER);
+
+const generateCommentsData = () => {
+  const commentsData = [];
+  const commentsCount = getRandomIntegerFromRange(MAX_COMMENTS_NUMBER, MIN_COMMENTS_NUMBER);
   
   for (let index = 0; index < commentsCount; index++) {
     commentsData.push({
-      avatar: getRandomElementFromArray(USER_AVATARS, MIN_INDEX_AVATAR),
-      message: getRandomElementFromArray(MESSAGES, MAX_INDEX_MESSAGES),
-      name: getRandomElementFromArray(USER_NAMES, MIN_INDEX_NAME)
+      avatar: getRandomElementFromArray ( MIN_INDEX_AVATAR, USER_AVATARS),
+      message: getRandomElementFromArray ( MAX_INDEX_MESSAGES, MESSAGES),
+      name: getRandomElementFromArray ( MIN_INDEX_NAME, USER_NAMES)
     })
   }
-  return commentsData;
+
+    return commentsData;
 };
 
 const  generatePicturesData = () => {
@@ -115,7 +116,7 @@ const  generatePicturesData = () => {
       description: getRandomIntegerFromRange(DESCRIPTIONS, MIN_INDEX_DESCRIPTION)
     })
   }
-} ;
+};
 
 const renderAllPictures = () => {
   const picturesContainer = document.querySelector(".pictures");
@@ -136,80 +137,86 @@ const renderAllPictures = () => {
   });
 
   picturesContainer.append(fragment);  
+
 };
 
-const renderBigPicture= (pictureID) => {
-  const bigPicture=document.querySelector('.big-picture');
- 
 
-  const dataForBigPicture = () => {
-    bigPicture.querySelector('.big-picture__img').src=picturesData[pictureID].image;
-    bigPicture.querySelector('.likes-count').textContent=picturesData[pictureID].likes;
-    bigPicture.querySelector('.comments-count').textContent=picturesData[pictureID].comments.length;
-    bigPicture.querySelector('.social__caption').textContent=picturesData[pictureID].description;
-  };
 
-  const renderComments = (pictureID) => {
-    const commentList=bigPicture.querySelector('.social__comments');
-    clearElementContents(commentList);
+const renderBigPicture = () => {
+  const bigPicture = document.querySelector(".big-picture");
+
+  const dataForBigPictures = () => {  
+    bigPicture.querySelector(".big-picture__img").src = picture.image;
+    bigPicture.querySelector(".comments-count").textContent = picture.comments;
+    bigPicture.querySelector(".social__caption").textContent = picture.description;
+    bigPicture.querySelector(".likes-count").textContent = picture.likes;
+  }
+
+  const renderSocialComments = () => {
+    const commentsList = bigPicture.querySelector(".social__comments");
+    clearElementContents(commentsList);
     
-    const createFragmentForComments = (pictureID) =>{
-      const newFragment = new DocumentFragment();
+    const createNewComments = () => {
+			const newComments = new DocumentFragment();
+    
+      const createCommentWrapper = (index) => {
+        const createComment = () => {
+          const newComment = document.createElement('li');
+          newComment.classList.add("social__comment");
+  
+          return newComment;
+        }
+        
+        const avatarForComments = () => {
+          const avatarElement = document.createElement("img");
+          avatarElement.classList.add("social__picture");
+          avatarElement.src = picturesData.comments[index].avatar; 
+          
+          return avatarElement;
+        }
 
-    const createCommentWrapper = (index) => {
-      const createComment = () => {
-        const newComment = document.createElement('li');
-        newComment.classList.add('social__comment');
+        const messageForComments = () => {
+          const messageElement = document.createElement("p");
+          messageElement.classList.add("social__text");
+          messageElement.textContent = picturesData.comments[index].message; 
 
-        return newComment;
+          return messageElement;
+        }
+
+        const comment = createComment();
+        comment.append(avatarForComments(),messageForComments());
+        
+        return comment;
       }
+            
+      const maxShowCommentCount = Math.min(picturesData.comments, MAX_SHOW_COMMENTS_COUNT);
 
-      const createAvatars = () => {
-        const avatar = document.createElement('img');
-        avatar.classList.add('social__picture');
-        avatar.src = picturesData[picturedID].comments[index].avatar;
+    	for (let index = 0; index < maxShowCommentCount; index++) {
+      	newComments.append(createCommentWrapper(index));
+			}
+			 
+       return newComments;
+		}
+		    
+    commentsList.append(createNewComments());
+	}
+	
+	renderSocialComments();
+	dataForBigPictures();
+  bigPicture.classList.remove('hidden')
+  
+  }
 
-        return avatar;
-      };
-    const createMessages = () => {
-      const messageElement = document.createElement('p');
-      messageElement.classList.add('social__text');
-      messageElement.textContent = picturesData[pictureID].comments[index].message;
-
-      return messageElement;
-    };
-    const newComments = createComment;
-      newComments.append(createAvatars(),createMessages());
-
-      return newComments;
-    };
-    
-    const maxCommentCount = Math.min(picturesData[pictureID].comments.length, MAX_COMMENTS_NUMBER);
-
-    for(let index = 0; index < maxCommentCount; index++) {
-    newFragment.append(createCommentWrapper(index));
-    };
+  const handlePictureClick = () => {
+    document.querySelector(".social__comment-count").classList.add("visually-hidden");
+    document.querySelector(".comments-loader").classList.add("visually-hidden");
    
-    return newFragment;
-  };
+  }
 
- commentList.append(createFragmentForComments(pictureID));
- };
-
-renderComments(pictureID);
-dataForBigPicture();
-showElement(bigPicture);
-};
-
-const pictureClick = () =>{
-document.querySelector('social__comment-count').classList.add('visually-hidden');
-document.querySelector('.comments-loader').classList.add('visually-hidden');
-
-};
-
-
+handlePictureClick();
 generatePicturesData();
 renderAllPictures();
+renderBigPicture();
 
 
 
