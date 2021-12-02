@@ -4,7 +4,7 @@ const MAX_LIKES_NUMBER = 200;
 const MIN_LIKES_NUMBER = 15;
 const MAX_COMMENTS_NUMBER = 21;
 const MIN_COMMENTS_NUMBER = 7;
-const MAX_INDEX_MESSAGES = 6;
+const MIN_INDEX_MESSAGES = 0;
 const MAX_SHOW_MINIATURS_NUMBER = 25;
 const MAX_SHOW_COMMENTS_COUNT = 5;
 const MIN_INDEX_AVATAR = 0;
@@ -98,9 +98,9 @@ const generateCommentsData = () => {
   
   for (let index = 0; index < commentsCount; index++) {
     commentsData.push({
-      avatar: getRandomElementFromArray ( MIN_INDEX_AVATAR, USER_AVATARS),
-      message: getRandomElementFromArray ( MAX_INDEX_MESSAGES, MESSAGES),
-      name: getRandomElementFromArray ( MIN_INDEX_NAME, USER_NAMES)
+      avatar: getRandomElementFromArray ( USER_AVATARS, MIN_INDEX_AVATAR),
+      message: getRandomElementFromArray ( MESSAGES, MIN_INDEX_MESSAGES),
+      name: getRandomElementFromArray ( USER_NAMES, MIN_INDEX_NAME)
     })
   }
 
@@ -113,10 +113,12 @@ const  generatePicturesData = () => {
       comments: generateCommentsData(),
       likes: getRandomIntegerFromRange(MAX_LIKES_NUMBER, MIN_LIKES_NUMBER),
       image: PHOTOS_URLS[index],
-      description: getRandomIntegerFromRange(DESCRIPTIONS, MIN_INDEX_DESCRIPTION)
+      description: getRandomElementFromArray(DESCRIPTIONS, MIN_INDEX_DESCRIPTION)
     })
   }
 };
+
+generatePicturesData();
 
 const renderAllPictures = () => {
   const picturesContainer = document.querySelector(".pictures");
@@ -124,39 +126,51 @@ const renderAllPictures = () => {
   const pictureTemplate = document.querySelector("#picture").content.querySelector(".picture");
  
   const createPicture = (picture, index) => {
-    const image =pictureTemplate.cloneNode(true);
+    const image = pictureTemplate.cloneNode(true);
 
     image.querySelector(".picture__comments").textContent = picture.comments.length;
     image.querySelector(".picture__likes").textContent = picture.likes;
     image.querySelector(".picture__img").src = picture.image;
+    image.setAttribute("data-number", index);
 
     return image;
   }
+
   picturesData.forEach((picture, index) => {
     fragment.append(createPicture(picture, index));
   });
 
   picturesContainer.append(fragment);  
 
+  const setPicturesClickListeners = () => {
+    const miniaturs = picturesContainer.querySelectorAll(".picture__img");
+  
+    miniaturs.forEach((event) => {
+      event.addEventListener("click", handlePictureClick)
+    });
+  }
+
+  setPicturesClickListeners();
+
 };
 
 
 
-const renderBigPicture = () => {
+const renderBigPicture = (pictureID) => {
   const bigPicture = document.querySelector(".big-picture");
 
   const dataForBigPictures = () => {  
-    bigPicture.querySelector(".big-picture__img").src = picture.image;
-    bigPicture.querySelector(".comments-count").textContent = picture.comments;
-    bigPicture.querySelector(".social__caption").textContent = picture.description;
-    bigPicture.querySelector(".likes-count").textContent = picture.likes;
+    bigPicture.querySelector(".big-picture__img img").src = picturesData[pictureID].image;
+    bigPicture.querySelector(".comments-count").textContent = picturesData[pictureID].comments.length;
+    bigPicture.querySelector(".social__caption").textContent = picturesData[pictureID].description;
+    bigPicture.querySelector(".likes-count").textContent = picturesData[pictureID].likes;
   }
 
-  const renderSocialComments = () => {
+  const renderSocialComments = (pictureID) => {
     const commentsList = bigPicture.querySelector(".social__comments");
     clearElementContents(commentsList);
     
-    const createNewComments = () => {
+    const createNewComments = (pictureID) => {
 			const newComments = new DocumentFragment();
     
       const createCommentWrapper = (index) => {
@@ -170,7 +184,8 @@ const renderBigPicture = () => {
         const avatarForComments = () => {
           const avatarElement = document.createElement("img");
           avatarElement.classList.add("social__picture");
-          avatarElement.src = picturesData.comments[index].avatar; 
+
+          avatarElement.src = picturesData[pictureID].comments[index].avatar; 
           
           return avatarElement;
         }
@@ -178,7 +193,8 @@ const renderBigPicture = () => {
         const messageForComments = () => {
           const messageElement = document.createElement("p");
           messageElement.classList.add("social__text");
-          messageElement.textContent = picturesData.comments[index].message; 
+
+          messageElement.textContent = picturesData[pictureID].comments[index].message; 
 
           return messageElement;
         }
@@ -189,7 +205,7 @@ const renderBigPicture = () => {
         return comment;
       }
             
-      const maxShowCommentCount = Math.min(picturesData.comments, MAX_SHOW_COMMENTS_COUNT);
+      const maxShowCommentCount = Math.min(picturesData[pictureID].comments.length, MAX_SHOW_COMMENTS_COUNT);
 
     	for (let index = 0; index < maxShowCommentCount; index++) {
       	newComments.append(createCommentWrapper(index));
@@ -198,25 +214,36 @@ const renderBigPicture = () => {
        return newComments;
 		}
 		    
-    commentsList.append(createNewComments());
+    commentsList.append(createNewComments(pictureID));
 	}
 	
-	renderSocialComments();
+	renderSocialComments(pictureID);
 	dataForBigPictures();
   bigPicture.classList.remove('hidden')
   
+  const removePicturesClickListeners = () => {
+    const miniaturs = document.querySelectorAll(".picture__img");
+  
+    miniaturs.forEach((event) => {
+      event.removeEventListener("click", handlePictureClick)
+    });
   }
 
-  const handlePictureClick = () => {
+  removePicturesClickListeners();
+  }
+
+  const handlePictureClick = (event) => {
     document.querySelector(".social__comment-count").classList.add("visually-hidden");
     document.querySelector(".comments-loader").classList.add("visually-hidden");
-   
+    const pictureID = event.currentTarget.parentNode.getAttribute("data-number");
+
+   renderBigPicture(pictureID);
   }
 
-handlePictureClick();
-generatePicturesData();
+
+
 renderAllPictures();
-renderBigPicture();
+
 
 
 
