@@ -90,17 +90,15 @@ const getRandomElementFromArray = (array, minValue = 0, maxValue = array.length 
   return array[getRandomIntegerFromRange(minValue, maxValue)];
 };
 
-
-
 const generateCommentsData = () => {
   const commentsData = [];
   const commentsCount = getRandomIntegerFromRange(MAX_COMMENTS_NUMBER, MIN_COMMENTS_NUMBER);
   
   for (let index = 0; index < commentsCount; index++) {
     commentsData.push({
-      avatar: getRandomElementFromArray ( USER_AVATARS, MIN_INDEX_AVATAR),
-      message: getRandomElementFromArray ( MESSAGES, MIN_INDEX_MESSAGES),
-      name: getRandomElementFromArray ( USER_NAMES, MIN_INDEX_NAME)
+      avatar: getRandomElementFromArray (USER_AVATARS, MIN_INDEX_AVATAR),
+      message: getRandomElementFromArray (MESSAGES, MIN_INDEX_MESSAGES),
+      name: getRandomElementFromArray (USER_NAMES, MIN_INDEX_NAME)
     })
   }
 
@@ -154,8 +152,6 @@ const renderAllPictures = () => {
 
 };
 
-
-
 const renderBigPicture = (pictureID) => {
   const bigPicture = document.querySelector(".big-picture");
 
@@ -181,7 +177,7 @@ const renderBigPicture = (pictureID) => {
           return newComment;
         }
         
-        const avatarForComments = () => {
+        const createNewAvatar = () => {
           const avatarElement = document.createElement("img");
           avatarElement.classList.add("social__picture");
 
@@ -190,7 +186,7 @@ const renderBigPicture = (pictureID) => {
           return avatarElement;
         }
 
-        const messageForComments = () => {
+        const createNewMessage = () => {
           const messageElement = document.createElement("p");
           messageElement.classList.add("social__text");
 
@@ -200,7 +196,7 @@ const renderBigPicture = (pictureID) => {
         }
 
         const comment = createComment();
-        comment.append(avatarForComments(),messageForComments());
+        comment.append(createNewAvatar(),createNewMessage());
         
         return comment;
       }
@@ -239,8 +235,6 @@ const renderBigPicture = (pictureID) => {
 
    renderBigPicture(pictureID);
   }
-
-
 
 renderAllPictures();
 
