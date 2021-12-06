@@ -119,17 +119,17 @@ const  generatePicturesData = () => {
 generatePicturesData();
 
 const renderAllPictures = () => {
-  const picturesContainer = document.querySelector(".pictures");
+  const picturesContainer = document.querySelector('.pictures');
   const fragment = document.createDocumentFragment(); 
-  const pictureTemplate = document.querySelector("#picture").content.querySelector(".picture");
+  const pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
  
   const createPicture = (picture, index) => {
     const image = pictureTemplate.cloneNode(true);
 
-    image.querySelector(".picture__comments").textContent = picture.comments.length;
-    image.querySelector(".picture__likes").textContent = picture.likes;
-    image.querySelector(".picture__img").src = picture.image;
-    image.setAttribute("data-number", index);
+    image.querySelector('.picture__comments').textContent = picture.comments.length;
+    image.querySelector('.picture__likes').textContent = picture.likes;
+    image.querySelector('.picture__img').src = picture.image;
+    image.setAttribute('data-number', index);
 
     return image;
   }
@@ -141,10 +141,10 @@ const renderAllPictures = () => {
   picturesContainer.append(fragment);  
 
   const setPicturesClickListeners = () => {
-    const miniaturs = picturesContainer.querySelectorAll(".picture__img");
+    const miniaturs = picturesContainer.querySelectorAll('.picture__img');
   
-    miniaturs.forEach((event) => {
-      event.addEventListener("click", handlePictureClick)
+    miniaturs.forEach((evt) => {
+      evt.addEventListener('click', handlePictureClick)
     });
   }
 
@@ -153,17 +153,17 @@ const renderAllPictures = () => {
 };
 
 const renderBigPicture = (pictureID) => {
-  const bigPicture = document.querySelector(".big-picture");
+  const bigPicture = document.querySelector('.big-picture');
 
   const dataForBigPictures = () => {  
-    bigPicture.querySelector(".big-picture__img img").src = picturesData[pictureID].image;
-    bigPicture.querySelector(".comments-count").textContent = picturesData[pictureID].comments.length;
-    bigPicture.querySelector(".social__caption").textContent = picturesData[pictureID].description;
-    bigPicture.querySelector(".likes-count").textContent = picturesData[pictureID].likes;
+    bigPicture.querySelector('.big-picture__img img').src = picturesData[pictureID].image;
+    bigPicture.querySelector('.comments-count').textContent = picturesData[pictureID].comments.length;
+    bigPicture.querySelector('.social__caption').textContent = picturesData[pictureID].description;
+    bigPicture.querySelector('.likes-count').textContent = picturesData[pictureID].likes;
   }
 
   const renderSocialComments = (pictureID) => {
-    const commentsList = bigPicture.querySelector(".social__comments");
+    const commentsList = bigPicture.querySelector('.social__comments');
     clearElementContents(commentsList);
     
     const createNewComments = (pictureID) => {
@@ -172,14 +172,14 @@ const renderBigPicture = (pictureID) => {
       const createCommentWrapper = (index) => {
         const createComment = () => {
           const newComment = document.createElement('li');
-          newComment.classList.add("social__comment");
+          newComment.classList.add('social__comment');
   
           return newComment;
         }
         
         const createNewAvatar = () => {
-          const avatarElement = document.createElement("img");
-          avatarElement.classList.add("social__picture");
+          const avatarElement = document.createElement('img');
+          avatarElement.classList.add('social__picture');
 
           avatarElement.src = picturesData[pictureID].comments[index].avatar; 
           
@@ -187,8 +187,8 @@ const renderBigPicture = (pictureID) => {
         }
 
         const createNewMessage = () => {
-          const messageElement = document.createElement("p");
-          messageElement.classList.add("social__text");
+          const messageElement = document.createElement('p');
+          messageElement.classList.add('social__text');
 
           messageElement.textContent = picturesData[pictureID].comments[index].message; 
 
@@ -218,20 +218,20 @@ const renderBigPicture = (pictureID) => {
   bigPicture.classList.remove('hidden')
   
   const removePicturesClickListeners = () => {
-    const miniaturs = document.querySelectorAll(".picture__img");
+    const miniaturs = document.querySelectorAll('.picture__img');
   
-    miniaturs.forEach((event) => {
-      event.removeEventListener("click", handlePictureClick)
+    miniaturs.forEach((evt) => {
+      evt.removeEventListener('click', handlePictureClick)
     });
   }
 
   removePicturesClickListeners();
   }
 
-  const handlePictureClick = (event) => {
-    document.querySelector(".social__comment-count").classList.add("visually-hidden");
-    document.querySelector(".comments-loader").classList.add("visually-hidden");
-    const pictureID = event.currentTarget.parentNode.getAttribute("data-number");
+  const handlePictureClick = (evt) => {
+    document.querySelector('.social__comment-count').classList.add('visually-hidden');
+    document.querySelector('.comments-loader').classList.add('visually-hidden');
+    const pictureID = evt.currentTarget.parentNode.getAttribute('data-number');
 
    renderBigPicture(pictureID);
   }
