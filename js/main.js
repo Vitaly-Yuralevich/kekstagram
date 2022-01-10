@@ -10,6 +10,9 @@ const MAX_SHOW_COMMENTS_COUNT = 5;
 const MIN_INDEX_AVATAR = 0;
 const MIN_INDEX_NAME = 0;
 const MIN_INDEX_DESCRIPTION = 0;
+const MAX_SLIDER_VALUE = 100;
+const ENTER = "Enter";
+const ESCAPE = "Escape";
 
 const MESSAGES = [
     'Все отлично!',
@@ -76,8 +79,16 @@ const DESCRIPTIONS = [
 
 const picturesData = [];
 
-const clearElementContents=(element) => {
+const clearElementContents = (element) => {
   element.innerHTML = '' 
+};
+
+const showElement = (element) => {
+  element.classList.remove("hidden");
+}
+
+const hideElement = (element) => {
+  element.classList.add("hidden");
 };
 
 const getRandomIntegerFromRange = (minValue, maxValue) => {
@@ -218,8 +229,8 @@ const renderBigPicture = (pictureID) => {
   bigPicture.classList.remove('hidden')
   
   const removePicturesClickListeners = () => {
-    const miniaturs = document.querySelectorAll('.picture__img');
-  
+      const miniaturs = document.querySelectorAll('.picture__img');
+     
     miniaturs.forEach((evt) => {
       evt.removeEventListener('click', handlePictureClick)
     });
@@ -236,7 +247,163 @@ const renderBigPicture = (pictureID) => {
    renderBigPicture(pictureID);
   }
 
+  const EFFECT = {
+
+    NONE: {
+      className: 'effect__preview--none',
+    property: 'none',
+    maxValue: null,
+    minValue: null,
+    measure: ''},
+  
+    CHROME: {
+      className: 'effects__preview--chrome',
+      property: 'grayscale',
+      maxValue: 1,
+      minValue: 0,
+      measure: ''
+    },
+  
+    SEPIA:{
+      className: 'effects__preview--sepia',
+      property: 'sepia',
+      maxValue: 1,
+      minValue: 0,
+      measure: ''
+    },
+  
+    MARVIN:{
+      className:'effects__preview--marvin',
+      property:'invert',
+      maxValue:100,
+      minValue:0,
+      measure:'%'
+    },
+  
+    PHOBOS:{
+  className: 'effects__preview--phobos',
+  property: 'blur',
+  maxValue: '5',
+  minValue: '0',
+  measure: 'px'
+    },
+  
+    HEAT:{
+      className: 'effects__preview--heat',
+      property: 'brightness',
+      maxValue: 3,
+      minValue: 0,
+      measure: ''
+    }
+  }
+
+  const isEnterEvent = (evt, callback) => {
+    if (evt.code === ENTER) {
+      callback(evt);
+    }
+  }
+  
+  const escapeEvent = (evt, callback) => {
+    if (evt.code === ESCAPE) {
+      callback(evt);
+    }
+  }
+
+  const loadNewPhotoInValue = () => {
+
+const upLoadInput = document.querySelector('.img-upload__input');
+const upLoadOverlay = document.querySelector('.img-upload__overlay');
+const upLoadPreview = upLoadOverlay.querySelector('.img-upload__preview img');
+const upLoadEffect = upLoadOverlay.querySelector('.img-upload__effect-level')
+const upLoadCancel = upLoadOverlay.querySelector('.img-upload__cancel')
+const levelValue = upLoadEffect.querySelector('.effect-level__value');
+const pin = upLoadEffect.querySelector('.effect-level__pin');
+const depth = upLoadEffect.querySelector('.effect-level__depth');
+const effectRadio = upLoadOverlay.querySelectorAll('.effects__radio');
+ 
+ const handleLoadFile = () => {
+  showElement(upLoadOverlay);
+   hideElement(upLoadEffect);
+    setEditFormListeners();
+ } 
+
+ upLoadInput.addEventListener('change', handleLoadFile);
+
+ const useEffects = (currentElement) => {
+  if (currentElement.value === 'none') {
+     hideElement(upLoadEffect);
+   } else {
+     showElement(upLoadEffect);
+   
+ }
+
+ const deleteOldEffects =() => {
+  upLoadPreview.style.filter = '';
+  upLoadPreview.className = '';
+}
+
+   const addEffectData = (currentElement) => {
+     const effect =EFFECT[currentElement.value.toUpperCase()];
+    
+    upLoadPreview.style.filter = `${effect.property}
+                                   (${effect.maxValue}
+                                    ${effect.measure})`;
+    upLoadPreview.classList.add(effect.className)
+   }
+
+  const setSliderValue = (value) => {
+     pin.style.left = `${value}%`;
+     depth.style.width = `${value}%`;
+     levelValue.setAttribute('value', value)
+   }
+
+   deleteOldEffects();
+   addEffectData(currentElement);
+   setSliderValue(MAX_SLIDER_VALUE);
+ }
+
+ const handleEffectFocus = (evt) => {
+   useEffects(evt.target);
+ }
+ 
+ const setEditFormListeners = () => {
+   upLoadCancel.addEventListener('click', handleImageEditorCloseClick, {
+     once:true,
+     capture:true});
+
+   document.addEventListener('keydown', handleImageEditorCloseKeyDown, {
+     once:true,
+     capture:true});
+ }
+
+ effectRadio.forEach((effect) => {
+  effect.addEventListener('focus', handleEffectFocus,{
+  capture:true,
+  once:false
+});
+ });
+
+ const closeEditForm = () => {
+  upLoadInput.value = '';
+
+  hideElement(upLoadOverlay);
+  deleteOldEffects();
+}
+
+const handleImageEditorCloseClick = () => {
+  closeEditForm();
+}
+
+const handleImageEditorCloseKeyDown = (downEvt) => {
+  escapeEvent(downEvt, (evt) => {
+    evt.preventDefault();
+    closeEditForm();
+  });
+}
+ };
+
 renderAllPictures();
+loadNewPhotoInValue();
 
 
 
