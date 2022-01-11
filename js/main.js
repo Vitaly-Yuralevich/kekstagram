@@ -392,7 +392,8 @@ const effectRadio = upLoadOverlay.querySelectorAll('.effects__radio');
 
 const handleImageEditorCloseClick = () => {
   closeEditForm();
-}
+} 
+
 
 const handleImageEditorCloseKeyDown = (downEvt) => {
   escapeEvent(downEvt, (evt) => {
