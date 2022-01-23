@@ -77,6 +77,68 @@ const DESCRIPTIONS = [
   'Полагаю Sony может в будущем удивить нас своими возможностями',
 ];
 
+const Effect = {
+
+  NONE: {
+    className: 'effect__preview--none',
+    property: 'none',
+    maxValue: null,
+    minValue: null,
+    measure: ''},
+
+  CHROME: {
+    className: 'effects__preview--chrome',
+    property: 'grayscale',
+    maxValue: 1,
+    minValue: 0,
+    measure: ''
+  },
+
+  SEPIA: {
+    className: 'effects__preview--sepia',
+    property: 'sepia',
+    maxValue: 1,
+    minValue: 0,
+    measure: ''
+  },
+
+  MARVIN: {
+    className: 'effects__preview--marvin',
+    property: 'invert',
+    maxValue: 100,
+    minValue: 0,
+    measure: '%'
+  },
+
+  PHOBOS: {
+    className: 'effects__preview--phobos',
+    property: 'blur',
+    maxValue: '5',
+    minValue: '3',
+    measure: 'px'
+  },
+
+  HEAT: {
+    className: 'effects__preview--heat',
+    property: 'brightness',
+    maxValue: 3,
+    minValue: 1,
+    measure: ''
+  }
+}
+
+const isEnterEvent = (evt, callback) => {
+  if (evt.code === ENTER) {
+    callback(evt);
+  }
+}
+
+const escapeEvent = (evt, callback) => {
+  if (evt.code === ESCAPE) {
+    callback(evt);
+  }
+}
+
 const picturesData = [];
 
 const clearElementContents = (element) => {
@@ -116,7 +178,7 @@ const generateCommentsData = () => {
     return commentsData;
 };
 
-const  generatePicturesData = () => {
+const generatePicturesData = () => {
   for(let index = 0; index < MAX_SHOW_MINIATURS_NUMBER; index++) {
     picturesData.push({
       comments: generateCommentsData(),
@@ -151,17 +213,28 @@ const renderAllPictures = () => {
 
   picturesContainer.append(fragment);  
 
-  const setPicturesClickListeners = () => {
-    const miniaturs = picturesContainer.querySelectorAll('.picture__img');
-  
-    miniaturs.forEach((evt) => {
-      evt.addEventListener('click', handlePictureClick)
-    });
-  }
+  const miniaturs = document.querySelectorAll(".picture");
 
-  setPicturesClickListeners();
+  miniaturs.forEach((picture) => {
+    picture.addEventListener("click", handlePictureClick);
+    picture.addEventListener("keydown", handlePictureKeyDown);
+  });
+}
 
-};
+const getPictureAttribute = (evt) => {
+  return evt.currentTarget.getAttribute("data-number");
+}
+
+const handlePictureClick = (evt) => {
+  renderBigPicture(getPictureAttribute(evt));
+}
+
+const handlePictureKeyDown = (downEvt) => {
+  isEnterEvent(downEvt, (evt) => {
+    evt.preventDefault();
+    renderBigPicture(getPictureAttribute(evt));
+  });
+}
 
 const renderBigPicture = (pictureID) => {
   const bigPicture = document.querySelector('.big-picture');
@@ -173,11 +246,11 @@ const renderBigPicture = (pictureID) => {
     bigPicture.querySelector('.likes-count').textContent = picturesData[pictureID].likes;
   }
 
-  const renderSocialComments = (pictureID) => {
+  const renderSocialComments = () => {
     const commentsList = bigPicture.querySelector('.social__comments');
     clearElementContents(commentsList);
     
-    const createNewComments = (pictureID) => {
+    const createNewComments = () => {
 			const newComments = new DocumentFragment();
     
       const createCommentWrapper = (index) => {
@@ -224,90 +297,15 @@ const renderBigPicture = (pictureID) => {
     commentsList.append(createNewComments(pictureID));
 	}
 	
-	renderSocialComments(pictureID);
-	dataForBigPictures();
-  bigPicture.classList.remove('hidden')
-  
-  const removePicturesClickListeners = () => {
-      const miniaturs = document.querySelectorAll('.picture__img');
-     
-    miniaturs.forEach((evt) => {
-      evt.removeEventListener('click', handlePictureClick)
-    });
-  }
-
-  removePicturesClickListeners();
-  }
-
-  const handlePictureClick = (evt) => {
-    document.querySelector('.social__comment-count').classList.add('visually-hidden');
-    document.querySelector('.comments-loader').classList.add('visually-hidden');
-    const pictureID = evt.currentTarget.parentNode.getAttribute('data-number');
-
-   renderBigPicture(pictureID);
-  }
-
-  const EFFECT = {
-
-    NONE: {
-      className: 'effect__preview--none',
-    property: 'none',
-    maxValue: null,
-    minValue: null,
-    measure: ''},
-  
-    CHROME: {
-      className: 'effects__preview--chrome',
-      property: 'grayscale',
-      maxValue: 1,
-      minValue: 0,
-      measure: ''
-    },
-  
-    SEPIA:{
-      className: 'effects__preview--sepia',
-      property: 'sepia',
-      maxValue: 1,
-      minValue: 0,
-      measure: ''
-    },
-  
-    MARVIN:{
-      className:'effects__preview--marvin',
-      property:'invert',
-      maxValue:100,
-      minValue:0,
-      measure:'%'
-    },
-  
-    PHOBOS:{
-  className: 'effects__preview--phobos',
-  property: 'blur',
-  maxValue: '5',
-  minValue: '0',
-  measure: 'px'
-    },
-  
-    HEAT:{
-      className: 'effects__preview--heat',
-      property: 'brightness',
-      maxValue: 3,
-      minValue: 0,
-      measure: ''
-    }
-  }
-
-  const isEnterEvent = (evt, callback) => {
-    if (evt.code === ENTER) {
-      callback(evt);
-    }
-  }
-  
-  const escapeEvent = (evt, callback) => {
-    if (evt.code === ESCAPE) {
-      callback(evt);
-    }
-  }
+  const hideCommentsCounter = () => {
+    document.querySelector(".social__comment-count").classList.add("visually-hidden");
+    document.querySelector(".comments-loader").classList.add("visually-hidden");
+  } 
+  renderSocialComments();
+  dataForBigPictures();
+  showElement(bigPicture);
+  hideCommentsCounter();
+  };
 
   const loadNewPhotoInValue = () => {
 
@@ -327,6 +325,11 @@ const effectRadio = upLoadOverlay.querySelectorAll('.effects__radio');
     setEditFormListeners();
  } 
 
+ const deleteOldEffects = () => {
+  upLoadPreview.style.filter = '';
+  upLoadPreview.className = '';
+}
+
  upLoadInput.addEventListener('change', handleLoadFile);
 
  const useEffects = (currentElement) => {
@@ -335,15 +338,10 @@ const effectRadio = upLoadOverlay.querySelectorAll('.effects__radio');
    } else {
      showElement(upLoadEffect);
    
- }
-
- const deleteOldEffects =() => {
-  upLoadPreview.style.filter = '';
-  upLoadPreview.className = '';
-}
+ };
 
    const addEffectData = (currentElement) => {
-     const effect =EFFECT[currentElement.value.toUpperCase()];
+     const effect = Effect[currentElement.value.toUpperCase()];
     
     upLoadPreview.style.filter = `${effect.property}
                                    (${effect.maxValue}
@@ -367,33 +365,42 @@ const effectRadio = upLoadOverlay.querySelectorAll('.effects__radio');
  }
  
  const setEditFormListeners = () => {
-   upLoadCancel.addEventListener('click', handleImageEditorCloseClick, {
-     once:true,
-     capture:true});
-
-   document.addEventListener('keydown', handleImageEditorCloseKeyDown, {
-     once:true,
-     capture:true});
+   upLoadCancel.addEventListener('click', handleImageEditorCloseClick);
+   document.addEventListener('click', anotherExitField);
+   document.addEventListener('keydown', handleImageEditorCloseKeyDown);
  }
 
  effectRadio.forEach((effect) => {
-  effect.addEventListener('focus', handleEffectFocus,{
-  capture:true,
-  once:false
-});
+  effect.addEventListener('focus', handleEffectFocus);
  });
+
+ const removeEditFormListeners = () => {
+  upLoadCancel.removeEventListener("click", handleImageEditorCloseClick);
+  document.removeEventListener('click', anotherExitField);
+  document.removeEventListener("keydown", handleImageEditorCloseKeyDown);
+
+  effectRadio.forEach((effect) => {
+    effect.removeEventListener("focus", handleEffectFocus);
+  });
+}
 
  const closeEditForm = () => {
   upLoadInput.value = '';
 
   hideElement(upLoadOverlay);
+  removeEditFormListeners();
   deleteOldEffects();
 }
 
 const handleImageEditorCloseClick = () => {
   closeEditForm();
-} 
+} ;
 
+const anotherExitField = (evt) => {
+  if (evt.target.className!= upLoadOverlay ){
+    closeEditForm();
+  }
+};
 
 const handleImageEditorCloseKeyDown = (downEvt) => {
   escapeEvent(downEvt, (evt) => {
@@ -401,6 +408,8 @@ const handleImageEditorCloseKeyDown = (downEvt) => {
     closeEditForm();
   });
 }
+
+
  };
 
 renderAllPictures();
