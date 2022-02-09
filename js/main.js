@@ -131,13 +131,13 @@ const isEnterEvent = (evt, callback) => {
   if (evt.code === ENTER) {
     callback(evt);
   }
-}
+};
 
 const escapeEvent = (evt, callback) => {
   if (evt.code === ESCAPE) {
     callback(evt);
   }
-}
+};
 
 const picturesData = [];
 
@@ -147,7 +147,7 @@ const clearElementContents = (element) => {
 
 const showElement = (element) => {
   element.classList.remove("hidden");
-}
+};
 
 const hideElement = (element) => {
   element.classList.add("hidden");
@@ -205,7 +205,7 @@ const renderAllPictures = () => {
     image.setAttribute('data-number', index);
 
     return image;
-  }
+  };
 
   picturesData.forEach((picture, index) => {
     fragment.append(createPicture(picture, index));
@@ -218,33 +218,65 @@ const renderAllPictures = () => {
   miniaturs.forEach((picture) => {
     picture.addEventListener("click", handlePictureClick);
     picture.addEventListener("keydown", handlePictureKeyDown);
-  });
-}
+  })
+};
 
 const getPictureAttribute = (evt) => {
   return evt.currentTarget.getAttribute("data-number");
-}
+};
 
 const handlePictureClick = (evt) => {
   renderBigPicture(getPictureAttribute(evt));
-}
+};
 
 const handlePictureKeyDown = (downEvt) => {
   isEnterEvent(downEvt, (evt) => {
     evt.preventDefault();
     renderBigPicture(getPictureAttribute(evt));
-  });
-}
+  })
+};
 
 const renderBigPicture = (pictureID) => {
   const bigPicture = document.querySelector('.big-picture');
+  const bigPictureCancel = bigPicture.querySelector('.big-picture__cancel');
 
   const dataForBigPictures = () => {  
     bigPicture.querySelector('.big-picture__img img').src = picturesData[pictureID].image;
     bigPicture.querySelector('.comments-count').textContent = picturesData[pictureID].comments.length;
     bigPicture.querySelector('.social__caption').textContent = picturesData[pictureID].description;
     bigPicture.querySelector('.likes-count').textContent = picturesData[pictureID].likes;
-  }
+  };
+
+  const setBigPictureListeners = () => {
+    bigPictureCancel.addEventListener('click', handleBigPictureCloseClick, {capture: true});
+    bigPicture.addEventListener('click', closeBigPictureOutside, {capture: true});
+    document.addEventListener('keydown', handleBigPictureCloseKeyDown, {capture: true}); 
+  };
+
+  const closeBigPictureBlock = () => {
+    bigPicture.value = '';
+    hideElement(bigPicture); 
+  };
+  
+  const handleBigPictureCloseClick = () => {
+   closeBigPictureBlock();
+  } ;
+  
+  const closeBigPictureOutside = (evt) => {
+    
+    if (evt.target.className != 'big-picture overlay' ){
+      return
+    } else {
+      closeBigPictureBlock();
+    }
+  };
+  
+  const handleBigPictureCloseKeyDown = (downEvt) => {
+    escapeEvent(downEvt, (evt) => {
+      evt.preventDefault();
+      closeBigPictureBlock();
+    })
+  };
 
   const renderSocialComments = () => {
     const commentsList = bigPicture.querySelector('.social__comments');
@@ -259,7 +291,7 @@ const renderBigPicture = (pictureID) => {
           newComment.classList.add('social__comment');
   
           return newComment;
-        }
+        };
         
         const createNewAvatar = () => {
           const avatarElement = document.createElement('img');
@@ -268,7 +300,7 @@ const renderBigPicture = (pictureID) => {
           avatarElement.src = picturesData[pictureID].comments[index].avatar; 
           
           return avatarElement;
-        }
+        };
 
         const createNewMessage = () => {
           const messageElement = document.createElement('p');
@@ -277,38 +309,40 @@ const renderBigPicture = (pictureID) => {
           messageElement.textContent = picturesData[pictureID].comments[index].message; 
 
           return messageElement;
-        }
+        };
 
         const comment = createComment();
         comment.append(createNewAvatar(),createNewMessage());
         
         return comment;
-      }
+      };
             
       const maxShowCommentCount = Math.min(picturesData[pictureID].comments.length, MAX_SHOW_COMMENTS_COUNT);
 
     	for (let index = 0; index < maxShowCommentCount; index++) {
       	newComments.append(createCommentWrapper(index));
-			}
+			};
 			 
        return newComments;
 		}
 		    
     commentsList.append(createNewComments(pictureID));
-	}
+	};
 	
   const hideCommentsCounter = () => {
     document.querySelector(".social__comment-count").classList.add("visually-hidden");
     document.querySelector(".comments-loader").classList.add("visually-hidden");
-  } 
+  } ;
+
   renderSocialComments();
   dataForBigPictures();
   showElement(bigPicture);
   hideCommentsCounter();
+  setBigPictureListeners();
   };
 
   const loadNewPhotoInValue = () => {
-
+    
 const upLoadInput = document.querySelector('.img-upload__input');
 const upLoadOverlay = document.querySelector('.img-upload__overlay');
 const upLoadPreview = upLoadOverlay.querySelector('.img-upload__preview img');
@@ -317,18 +351,23 @@ const upLoadCancel = upLoadOverlay.querySelector('.img-upload__cancel')
 const levelValue = upLoadEffect.querySelector('.effect-level__value');
 const pin = upLoadEffect.querySelector('.effect-level__pin');
 const depth = upLoadEffect.querySelector('.effect-level__depth');
-const effectRadio = upLoadOverlay.querySelectorAll('.effects__radio');
- 
+const effectList = upLoadOverlay.querySelector('.effects__list');
+
  const handleLoadFile = () => {
   showElement(upLoadOverlay);
    hideElement(upLoadEffect);
     setEditFormListeners();
- } 
+
+    effectList.addEventListener('focus', (evt) => {
+      if (evt.target.className !== "effects__item"){
+        useEffects(evt.target)
+      }}, {capture: true}); 
+ };
 
  const deleteOldEffects = () => {
   upLoadPreview.style.filter = '';
   upLoadPreview.className = '';
-}
+};
 
  upLoadInput.addEventListener('change', handleLoadFile);
 
@@ -337,67 +376,50 @@ const effectRadio = upLoadOverlay.querySelectorAll('.effects__radio');
      hideElement(upLoadEffect);
    } else {
      showElement(upLoadEffect);
-   
  };
 
    const addEffectData = (currentElement) => {
-     const effect = Effect[currentElement.value.toUpperCase()];
+     const effects = Effect[currentElement.value.toUpperCase()];
     
-    upLoadPreview.style.filter = `${effect.property}
-                                   (${effect.maxValue}
-                                    ${effect.measure})`;
-    upLoadPreview.classList.add(effect.className)
-   }
+    upLoadPreview.style.filter = `${effects.property}
+                                   (${effects.maxValue}
+                                    ${effects.measure})`;
+    upLoadPreview.classList.add(effects.className)
+   };
 
   const setSliderValue = (value) => {
      pin.style.left = `${value}%`;
      depth.style.width = `${value}%`;
      levelValue.setAttribute('value', value)
-   }
+   };
 
    deleteOldEffects();
    addEffectData(currentElement);
    setSliderValue(MAX_SLIDER_VALUE);
- }
+ };
 
- const handleEffectFocus = (evt) => {
-   useEffects(evt.target);
- }
- 
  const setEditFormListeners = () => {
-   upLoadCancel.addEventListener('click', handleImageEditorCloseClick);
-   document.addEventListener('click', anotherExitField);
-   document.addEventListener('keydown', handleImageEditorCloseKeyDown);
- }
-
- effectRadio.forEach((effect) => {
-  effect.addEventListener('focus', handleEffectFocus);
- });
-
- const removeEditFormListeners = () => {
-  upLoadCancel.removeEventListener("click", handleImageEditorCloseClick);
-  document.removeEventListener('click', anotherExitField);
-  document.removeEventListener("keydown", handleImageEditorCloseKeyDown);
-
-  effectRadio.forEach((effect) => {
-    effect.removeEventListener("focus", handleEffectFocus);
-  });
-}
+   upLoadCancel.addEventListener('click', handleImageEditorCloseClick, {capture: true});
+   upLoadOverlay.addEventListener('click', closeTheWindowOutside, {capture: true});
+   document.addEventListener('keydown', handleImageEditorCloseKeyDown, {capture: true});  
+ };
 
  const closeEditForm = () => {
   upLoadInput.value = '';
 
-  hideElement(upLoadOverlay);
-  removeEditFormListeners();
+   hideElement(upLoadOverlay);
   deleteOldEffects();
-}
+};
 
 const handleImageEditorCloseClick = () => {
   closeEditForm();
 } ;
 
-const anotherExitField = (evt) => {
-  if (evt.target.className!= upLoadOverlay ){
+const closeTheWindowOutside = (evt) => {
+  
+  if (evt.target.className != 'img-upload__overlay'){
+    return
+  } else {
     closeEditForm();
   }
 };
@@ -408,9 +430,7 @@ const handleImageEditorCloseKeyDown = (downEvt) => {
     closeEditForm();
   });
 }
-
-
- };
+ }
 
 renderAllPictures();
 loadNewPhotoInValue();
