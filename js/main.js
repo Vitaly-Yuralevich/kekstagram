@@ -425,7 +425,7 @@ const handleImageEditorCloseKeyDown = (downEvt) => {
     closeEditForm();
   });
 }
- }
+ };
 
 renderAllPictures();
 loadNewPhotoInValue();
