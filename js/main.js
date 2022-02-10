@@ -125,7 +125,7 @@ const Effect = {
     minValue: 1,
     measure: ''
   }
-}
+};
 
 const isEnterEvent = (evt, callback) => {
   if (evt.code === ENTER) {
@@ -133,7 +133,7 @@ const isEnterEvent = (evt, callback) => {
   }
 };
 
-const escapeEvent = (evt, callback) => {
+const isEscapeEvent = (evt, callback) => {
   if (evt.code === ESCAPE) {
     callback(evt);
   }
@@ -249,32 +249,29 @@ const renderBigPicture = (pictureID) => {
 
   const setBigPictureListeners = () => {
     bigPictureCancel.addEventListener('click', handleBigPictureCloseClick, {capture: true});
-    bigPicture.addEventListener('click', closeBigPictureOutside, {capture: true});
+    bigPicture.addEventListener('click', handleBigPictureOverlayClick, {capture: true});
     document.addEventListener('keydown', handleBigPictureCloseKeyDown, {capture: true}); 
   };
 
-  const closeBigPictureBlock = () => {
-    bigPicture.value = '';
+  const closeBigPicture = () => {
     hideElement(bigPicture); 
   };
   
   const handleBigPictureCloseClick = () => {
-   closeBigPictureBlock();
+   closeBigPicture();
   } ;
   
-  const closeBigPictureOutside = (evt) => {
+  const handleBigPictureOverlayClick = (evt) => {
     
-    if (evt.target.className != 'big-picture overlay' ){
-      return
-    } else {
-      closeBigPictureBlock();
-    }
+    if (evt.target.className === 'big-picture overlay' ){
+      closeBigPicture();
+    } 
   };
   
   const handleBigPictureCloseKeyDown = (downEvt) => {
-    escapeEvent(downEvt, (evt) => {
+    isEscapeEvent(downEvt, (evt) => {
       evt.preventDefault();
-      closeBigPictureBlock();
+      closeBigPicture();
     })
   };
 
@@ -355,11 +352,11 @@ const effectList = upLoadOverlay.querySelector('.effects__list');
 
  const handleLoadFile = () => {
   showElement(upLoadOverlay);
-   hideElement(upLoadEffect);
+  hideElement(upLoadEffect);
     setEditFormListeners();
 
     effectList.addEventListener('focus', (evt) => {
-      if (evt.target.className !== "effects__item"){
+      if (evt.target.closest(".effects__item")){
         useEffects(evt.target)
       }}, {capture: true}); 
  };
@@ -373,18 +370,18 @@ const effectList = upLoadOverlay.querySelector('.effects__list');
 
  const useEffects = (currentElement) => {
   if (currentElement.value === 'none') {
-     hideElement(upLoadEffect);
+    hideElement(upLoadEffect);
    } else {
-     showElement(upLoadEffect);
+    showElement(upLoadEffect);
  };
 
    const addEffectData = (currentElement) => {
-     const effects = Effect[currentElement.value.toUpperCase()];
+     const effect = Effect[currentElement.value.toUpperCase()];
     
-    upLoadPreview.style.filter = `${effects.property}
-                                   (${effects.maxValue}
-                                    ${effects.measure})`;
-    upLoadPreview.classList.add(effects.className)
+    upLoadPreview.style.filter = `${effect.property}
+                                   (${effect.maxValue}
+                                    ${effect.measure})`;
+    upLoadPreview.classList.add(effect.className)
    };
 
   const setSliderValue = (value) => {
@@ -397,7 +394,7 @@ const effectList = upLoadOverlay.querySelector('.effects__list');
    addEffectData(currentElement);
    setSliderValue(MAX_SLIDER_VALUE);
  };
-
+ 
  const setEditFormListeners = () => {
    upLoadCancel.addEventListener('click', handleImageEditorCloseClick, {capture: true});
    upLoadOverlay.addEventListener('click', closeTheWindowOutside, {capture: true});
@@ -417,15 +414,13 @@ const handleImageEditorCloseClick = () => {
 
 const closeTheWindowOutside = (evt) => {
   
-  if (evt.target.className != 'img-upload__overlay'){
-    return
-  } else {
+  if (evt.target.className === 'img-upload__overlay'){
     closeEditForm();
-  }
+  } 
 };
 
 const handleImageEditorCloseKeyDown = (downEvt) => {
-  escapeEvent(downEvt, (evt) => {
+ isEscapeEvent(downEvt, (evt) => {
     evt.preventDefault();
     closeEditForm();
   });
