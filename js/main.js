@@ -356,9 +356,8 @@ const effectList = upLoadOverlay.querySelector('.effects__list');
     setEditFormListeners();
 
     effectList.addEventListener('focus', (evt) => {
-      if (evt.target.closest(".effects__item")){
         useEffects(evt.target)
-      }}, {capture: true}); 
+      }, {capture: true}); 
  };
 
  const deleteOldEffects = () => {
