@@ -13,6 +13,11 @@ const MIN_INDEX_DESCRIPTION = 0;
 const MAX_SLIDER_VALUE = 100;
 const ENTER = "Enter";
 const ESCAPE = "Escape";
+const MAX_HASHTAG_NUMBER = 5;
+const MAX_HASHTAG_LENGTH = 20;
+const SEPARATOR = " "
+
+
 
 const MESSAGES = [
     'Все отлично!',
@@ -339,9 +344,9 @@ const renderBigPicture = (pictureID) => {
   };
 
   const loadNewPhotoInValue = () => {
-    
-const upLoadInput = document.querySelector('.img-upload__input');
-const upLoadOverlay = document.querySelector('.img-upload__overlay');
+const uploadForm = document.querySelector('.img-upload__form');
+const upLoadInput = uploadForm.querySelector('.img-upload__input');
+const upLoadOverlay = uploadForm.querySelector('.img-upload__overlay');
 const upLoadPreview = upLoadOverlay.querySelector('.img-upload__preview img');
 const upLoadEffect = upLoadOverlay.querySelector('.img-upload__effect-level')
 const upLoadCancel = upLoadOverlay.querySelector('.img-upload__cancel')
@@ -349,15 +354,12 @@ const levelValue = upLoadEffect.querySelector('.effect-level__value');
 const pin = upLoadEffect.querySelector('.effect-level__pin');
 const depth = upLoadEffect.querySelector('.effect-level__depth');
 const effectList = upLoadOverlay.querySelector('.effects__list');
+const hasHtagWindow = upLoadOverlay.querySelector('.text__hashtags');
 
  const handleLoadFile = () => {
   showElement(upLoadOverlay);
   hideElement(upLoadEffect);
     setEditFormListeners();
-
-    effectList.addEventListener('focus', (evt) => {
-        useEffects(evt.target)
-      }, {capture: true}); 
  };
 
  const deleteOldEffects = () => {
@@ -397,11 +399,83 @@ const effectList = upLoadOverlay.querySelector('.effects__list');
  const setEditFormListeners = () => {
    upLoadCancel.addEventListener('click', handleImageEditorCloseClick, {capture: true});
    upLoadOverlay.addEventListener('click', closeTheWindowOutside, {capture: true});
-   document.addEventListener('keydown', handleImageEditorCloseKeyDown, {capture: true});  
+   document.addEventListener('keydown', handleImageEditorCloseKeyDown, {capture: true});
+   hasHtagWindow.addEventListener('input', handlehasHtag, {capture: true});  
+   uploadForm.addEventListener('submit', (evt) => {evt.preventDefault()}, {capture: true});
+   
+
+   effectList.addEventListener('focus', (evt) => {
+    useEffects(evt.target)
+  }, {capture: true}); 
  };
 
+ const handlehasHtag = (evt) => {
+   hasHtagWindow.setCustomValidity('');
+   hasHtagWindow.setCustomValidity(getFromValidation(evt));
+ };
+
+ const getFromValidation = (evt) => {
+   const errors = {
+     noHasTag: false,
+     noOneSymbol: false,
+     space: false,
+     repeatHasTag: false,
+     maxLimitHasTag: false,
+     longHasTag: false,
+   };
+
+   const errorsToPrompt = {
+     noHasTag: 'Хэш-тег начинается с символа # (решетки).',
+     noOneSymbol: 'Хэш-тег не может состоять только из одной решетки.',
+     space: 'Хэш-теги разделяются пробелами.',
+     repeatHasTag: 'Один и тот же хэш-тег не может быть использован дважды.',
+     maxLimitHasTag: `Нельзя указать больше ${MAX_HASHTAG_NUMBER} хэш-тегов.`,
+     longHasTag: `Максимальная длина одного хэш-тега ${MAX_HASHTAG_LENGTH} символов, включая решетку.`
+   };
+
+let hashtagPrompt = '';
+
+const getHashTagArray = (evt) => {
+  const hashtags = evt.target.value.split(' ').filter(element => !!element);
+
+  return hashtags;
+};
+
+const hashtags = getHashTagArray(evt);
+
+
+hashtags.forEach((hashtag) => {
+  errors.noHasTag = errors.noHasTag || (hashtag[0]  !=='#');
+  errors.noOneSymbol = errors.noOneSymbol || (hashtag === '#');
+  errors.space = errors.space || (hashtag.includes('#', 1));
+  errors.longHasTag = errors.longHasTag || (hashtag.length > MAX_HASHTAG_LENGTH);
+  
+});
+
+const getHashTagRepeatErros = (hashtags) => {
+  const hashTagsArray = hashtags.filter((element, index) => {
+    return (index !== hashtags.indexOf(element)) || (index !== hashtags.lastIndexOf(element));
+  });
+
+  return hashTagsArray
+};
+
+errors.maxLimitHasTag = errors.maxLimitHasTag || (hashtags.length > MAX_HASHTAG_NUMBER);
+errors.repeatHasTag = errors.repeatHasTag || (getHashTagRepeatErros(hashtags).length > 0);
+
+for (const element in errors) {
+  if(errors[element]) {
+    hashtagPrompt += `${errorsToPrompt[element]} ${SEPARATOR}`;
+  }
+}
+
+return hashtagPrompt;
+ }
+ ;
  const closeEditForm = () => {
   upLoadInput.value = '';
+  hasHtagWindow.value ='';
+
 
    hideElement(upLoadOverlay);
   deleteOldEffects();
@@ -420,8 +494,9 @@ const closeTheWindowOutside = (evt) => {
 
 const handleImageEditorCloseKeyDown = (downEvt) => {
  isEscapeEvent(downEvt, (evt) => {
-    evt.preventDefault();
-    closeEditForm();
+   if(hasHtagWindow !==document.activeElement)
+    {evt.preventDefault();
+    closeEditForm();}
   });
 }
  };
