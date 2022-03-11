@@ -253,9 +253,9 @@ const renderBigPicture = (pictureID) => {
   };
 
   const setBigPictureListeners = () => {
-    bigPictureCancel.addEventListener('click', handleBigPictureCloseClick, {capture: true});
-    bigPicture.addEventListener('click', handleBigPictureOverlayClick, {capture: true});
-    document.addEventListener('keydown', handleBigPictureCloseKeyDown, {capture: true}); 
+    bigPictureCancel.addEventListener('click', handleBigPictureCloseClick);
+    bigPicture.addEventListener('click', handleBigPictureOverlayClick);
+    document.addEventListener('keydown', handleBigPictureCloseKeyDown); 
   };
 
   const closeBigPicture = () => {
@@ -343,7 +343,7 @@ const renderBigPicture = (pictureID) => {
   setBigPictureListeners();
   };
 
-  const loadNewPhotoInValue = () => {
+  const loadNewImage = () => {
 const uploadForm = document.querySelector('.img-upload__form');
 const upLoadInput = uploadForm.querySelector('.img-upload__input');
 const upLoadOverlay = uploadForm.querySelector('.img-upload__overlay');
@@ -354,7 +354,8 @@ const levelValue = upLoadEffect.querySelector('.effect-level__value');
 const pin = upLoadEffect.querySelector('.effect-level__pin');
 const depth = upLoadEffect.querySelector('.effect-level__depth');
 const effectList = upLoadOverlay.querySelector('.effects__list');
-const hasHtagWindow = upLoadOverlay.querySelector('.text__hashtags');
+const hashtagInput = upLoadOverlay.querySelector('.text__hashtags');
+const textDescription = upLoadOverlay.querySelector('.text__description');
 
  const handleLoadFile = () => {
   showElement(upLoadOverlay);
@@ -397,112 +398,111 @@ const hasHtagWindow = upLoadOverlay.querySelector('.text__hashtags');
  };
  
  const setEditFormListeners = () => {
-   upLoadCancel.addEventListener('click', handleImageEditorCloseClick, {capture: true});
-   upLoadOverlay.addEventListener('click', closeTheWindowOutside, {capture: true});
-   document.addEventListener('keydown', handleImageEditorCloseKeyDown, {capture: true});
-   hasHtagWindow.addEventListener('input', handlehasHtag, {capture: true});  
-   uploadForm.addEventListener('submit', (evt) => {evt.preventDefault()}, {capture: true});
+   upLoadCancel.addEventListener('click', handleImageEditorCloseClick);
+   upLoadOverlay.addEventListener('click', closeTheWindowOutside);
+   document.addEventListener('keydown', handleImageEditorCloseKeyDown);
+   hashtagInput.addEventListener('input', handleHashtag);  
+   uploadForm.addEventListener('submit', (evt) => {evt.preventDefault()});
    
 
    effectList.addEventListener('focus', (evt) => {
     useEffects(evt.target)
-  }, {capture: true}); 
- };
+   }); 
+  };
 
- const handlehasHtag = (evt) => {
-   hasHtagWindow.setCustomValidity('');
-   hasHtagWindow.setCustomValidity(getFromValidation(evt));
- };
+ const handleHashtag = (evt) => {
+   hashtagInput.setCustomValidity('');
+   hashtagInput.setCustomValidity(errorChecking(evt));
+  };
 
- const getFromValidation = (evt) => {
+ const errorChecking = (evt) => {
    const errors = {
-     noHasTag: false,
+     noHashtag: false,
      noOneSymbol: false,
      space: false,
-     repeatHasTag: false,
-     maxLimitHasTag: false,
-     longHasTag: false,
+     repeatHashtag: false,
+     maxLimitHashtag: false,
+     longHashtag: false,
    };
 
-   const errorsToPrompt = {
-     noHasTag: 'Хэш-тег начинается с символа # (решетки).',
+  const errorsToPrompt = {
+     noHashtag: 'Хэш-тег начинается с символа # (решетки).',
      noOneSymbol: 'Хэш-тег не может состоять только из одной решетки.',
      space: 'Хэш-теги разделяются пробелами.',
      repeatHasTag: 'Один и тот же хэш-тег не может быть использован дважды.',
-     maxLimitHasTag: `Нельзя указать больше ${MAX_HASHTAG_NUMBER} хэш-тегов.`,
-     longHasTag: `Максимальная длина одного хэш-тега ${MAX_HASHTAG_LENGTH} символов, включая решетку.`
+     maxLimitHashtag: `Нельзя указать больше ${MAX_HASHTAG_NUMBER} хэш-тегов.`,
+     longHashtag: `Максимальная длина одного хэш-тега ${MAX_HASHTAG_LENGTH} символов, включая решетку.`
    };
 
-let hashtagPrompt = '';
+  let hashtagPrompt = '';
 
-const getHashTagArray = (evt) => {
-  const hashtags = evt.target.value.split(' ').filter(element => !!element);
+   const getHashtagArray = (evt) => {
+     const hashtags = evt.target.value.toLowerCase().split(' ').filter(element => !!element);
 
-  return hashtags;
+    return hashtags;
 };
 
-const hashtags = getHashTagArray(evt);
+   const hashtags = getHashtagArray(evt);
 
 
-hashtags.forEach((hashtag) => {
-  errors.noHasTag = errors.noHasTag || (hashtag[0]  !=='#');
-  errors.noOneSymbol = errors.noOneSymbol || (hashtag === '#');
-  errors.space = errors.space || (hashtag.includes('#', 1));
-  errors.longHasTag = errors.longHasTag || (hashtag.length > MAX_HASHTAG_LENGTH);
+  hashtags.forEach((hashtag) => {
+     errors.noHashtag = errors.noHashtag || (hashtag[0]  !=='#');
+     errors.noOneSymbol = errors.noOneSymbol || (hashtag === '#');
+     errors.space = errors.space || (hashtag.includes('#', 1));
+     errors.longHashtag = errors.longHashtag || (hashtag.length > MAX_HASHTAG_LENGTH);
   
 });
 
-const getHashTagRepeatErros = (hashtags) => {
-  const hashTagsArray = hashtags.filter((element, index) => {
+   const getHashtagRepeatErros = (hashtags) => {
+     const hashtagsArray = hashtags.filter((element, index) => {
     return (index !== hashtags.indexOf(element)) || (index !== hashtags.lastIndexOf(element));
-  });
+    });
 
-  return hashTagsArray
-};
+   return hashtagsArray
+   };
 
-errors.maxLimitHasTag = errors.maxLimitHasTag || (hashtags.length > MAX_HASHTAG_NUMBER);
-errors.repeatHasTag = errors.repeatHasTag || (getHashTagRepeatErros(hashtags).length > 0);
+   errors.maxLimitHashtag = errors.maxLimitHashtag || (hashtags.length > MAX_HASHTAG_NUMBER);
+   errors.repeatHashtag = errors.repeatHashtag || (getHashtagRepeatErros(hashtags).length > 0);
 
-for (const element in errors) {
-  if(errors[element]) {
-    hashtagPrompt += `${errorsToPrompt[element]} ${SEPARATOR}`;
-  }
-}
+  for (const element in errors) {
+     if(errors[element]) {
+      hashtagPrompt += `${errorsToPrompt[element]} ${SEPARATOR}`;
+     }
+   }
 
-return hashtagPrompt;
- }
- ;
+   return hashtagPrompt;
+ };
+
  const closeEditForm = () => {
   upLoadInput.value = '';
-  hasHtagWindow.value ='';
-
+  hashtagInput.value ='';
+  textDescription.value = '';
 
    hideElement(upLoadOverlay);
   deleteOldEffects();
-};
+ };
 
 const handleImageEditorCloseClick = () => {
   closeEditForm();
-} ;
+ } ;
 
 const closeTheWindowOutside = (evt) => {
-  
   if (evt.target.className === 'img-upload__overlay'){
     closeEditForm();
-  } 
+   } 
 };
 
 const handleImageEditorCloseKeyDown = (downEvt) => {
  isEscapeEvent(downEvt, (evt) => {
-   if(hasHtagWindow !==document.activeElement)
+   if(hashtagInput !== document.activeElement && textDescription !== document.activeElement)
     {evt.preventDefault();
     closeEditForm();}
-  });
-}
- };
+   });
+  }
+};
 
 renderAllPictures();
-loadNewPhotoInValue();
+loadNewImage();
 
 
 
