@@ -225,19 +225,23 @@ const renderAllPictures = () => {
   })
 };
 
-const getPictureAttribute = (evt) => {
+const getPictureDataNumber = (evt) => {
   return evt.currentTarget.getAttribute("data-number");
 };
 
 const handlePictureClick = (evt) => {
-  renderBigPicture(getPictureAttribute(evt));
+  renderBigPicture(getPictureDataNumber(evt));
+
+ picture.removeEventListener("click", handlePictureClick);
 };
 
 const handlePictureKeyDown = (downEvt) => {
   isEnterEvent(downEvt, (evt) => {
     evt.preventDefault();
-    renderBigPicture(getPictureAttribute(evt));
-  })
+    renderBigPicture(getPictureDataNumber(evt));
+  });
+
+  picture.removeEventListener("keydown", handlePictureKeyDown);
 };
 
 const renderBigPicture = (pictureID) => {
@@ -365,6 +369,7 @@ const textDescription = upLoadOverlay.querySelector('.text__description');
   showElement(upLoadOverlay);
   hideElement(upLoadEffect);
     setEditFormListeners();
+    upLoadInput.removeEventListener('change', handleLoadFile)
   };
 
  const deleteOldEffects = () => {
@@ -406,7 +411,7 @@ const textDescription = upLoadOverlay.querySelector('.text__description');
    upLoadOverlay.addEventListener('click', closeTheWindowOutside);
    document.addEventListener('keydown', handleImageEditorCloseKeyDown);
    hashtagInput.addEventListener('input', handleHashtag);  
-   uploadForm.addEventListener('submit', (evt) => {evt.preventDefault()});
+   uploadForm.addEventListener('submit',handleForSubmit);
    
    effectList.addEventListener('focus', (evt) => {
     useEffects(evt.target)
@@ -423,7 +428,7 @@ const textDescription = upLoadOverlay.querySelector('.text__description');
      noHashtag: false,
      noOneSymbol: false,
      space: false,
-     repeatHashtag: false,
+     repeatHashTag: false,
      maxLimitHashtag: false,
      longHashtag: false,
    };
@@ -432,21 +437,14 @@ const textDescription = upLoadOverlay.querySelector('.text__description');
      noHashtag: 'Хэш-тег начинается с символа # (решетки).',
      noOneSymbol: 'Хэш-тег не может состоять только из одной решетки.',
      space: 'Хэш-теги разделяются пробелами.',
-     repeatHasTag: 'Один и тот же хэш-тег не может быть использован дважды.',
+     repeatHashTag: 'Один и тот же хэш-тег не может быть использован дважды.',
      maxLimitHashtag: `Нельзя указать больше ${MAX_HASHTAG_NUMBER} хэш-тегов.`,
      longHashtag: `Максимальная длина одного хэш-тега ${MAX_HASHTAG_LENGTH} символов, включая решетку.`
    };
 
   let hashtagPrompt = '';
-
-   const getHashtagArray = (evt) => {
-     const hashtags = evt.target.value.toLowerCase().split(' ').filter(element => !!element);
-
-    return hashtags;
-    };
-
-   const hashtags = getHashtagArray(evt);
-
+ 
+  const hashtags = evt.target.value.toLowerCase().split(' ').filter(element => !!element);
 
   hashtags.forEach((hashtag) => {
      errors.noHashtag = errors.noHashtag || (hashtag[0]  !=='#');
@@ -465,7 +463,7 @@ const textDescription = upLoadOverlay.querySelector('.text__description');
    };
 
    errors.maxLimitHashtag = errors.maxLimitHashtag || (hashtags.length > MAX_HASHTAG_NUMBER);
-   errors.repeatHashtag = errors.repeatHashtag || (getHashtagRepeatErros(hashtags).length > 0);
+   errors.repeatHashTag = errors.repeatHashTag || (getHashtagRepeatErros(hashtags).length > 0);
 
   for (const element in errors) {
      if(errors[element]) {
@@ -481,7 +479,7 @@ const textDescription = upLoadOverlay.querySelector('.text__description');
   upLoadOverlay.removeEventListener('click', closeTheWindowOutside);
   document.removeEventListener('keydown', handleImageEditorCloseKeyDown);
   hashtagInput.removeEventListener('input', handleHashtag);  
-  uploadForm.removeEventListener('submit', (evt) => {evt.preventDefault()});
+  uploadForm.removeEventListener('submit', handleForSubmit);
   
   effectList.removeEventListener('focus', (evt) => {
    useEffects(evt.target)
@@ -500,7 +498,11 @@ const textDescription = upLoadOverlay.querySelector('.text__description');
 
 const handleImageEditorCloseClick = () => {
   closeEditForm();
- };
+ }; 
+
+const handleForSubmit = (evt) =>{
+  evt.preventDefault();
+};
 
 const closeTheWindowOutside = (evt) => {
   if (evt.target.className === 'img-upload__overlay'){
@@ -511,7 +513,7 @@ const closeTheWindowOutside = (evt) => {
 const handleImageEditorCloseKeyDown = (downEvt) => {
  isEscapeEvent(downEvt, (evt) => {
    if(hashtagInput !== document.activeElement && textDescription !== document.activeElement){
-     evt.preventDefault();
+    handleForSubmit(evt);
     closeEditForm();
      }
    });
