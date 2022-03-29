@@ -232,7 +232,7 @@ const getPictureDataNumber = (evt) => {
 const handlePictureClick = (evt) => {
   renderBigPicture(getPictureDataNumber(evt));
 
- picture.removeEventListener("click", handlePictureClick);
+picture.removeEventListener("click", handlePictureClick);
 };
 
 const handlePictureKeyDown = (downEvt) => {
@@ -241,7 +241,7 @@ const handlePictureKeyDown = (downEvt) => {
     renderBigPicture(getPictureDataNumber(evt));
   });
 
-  picture.removeEventListener("keydown", handlePictureKeyDown);
+ picture.removeEventListener("keydown", handlePictureKeyDown);
 };
 
 const renderBigPicture = (pictureID) => {
@@ -369,7 +369,6 @@ const textDescription = upLoadOverlay.querySelector('.text__description');
   showElement(upLoadOverlay);
   hideElement(upLoadEffect);
     setEditFormListeners();
-    upLoadInput.removeEventListener('change', handleLoadFile)
   };
 
  const deleteOldEffects = () => {
@@ -491,6 +490,7 @@ const textDescription = upLoadOverlay.querySelector('.text__description');
   hashtagInput.value ='';
   textDescription.value = '';
 
+  
    hideElement(upLoadOverlay);
    removeEditFormListeners();
   deleteOldEffects();
