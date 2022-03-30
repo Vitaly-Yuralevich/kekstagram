@@ -411,11 +411,12 @@ const textDescription = upLoadOverlay.querySelector('.text__description');
    document.addEventListener('keydown', handleImageEditorCloseKeyDown);
    hashtagInput.addEventListener('input', handleHashtag);  
    uploadForm.addEventListener('submit',handleForSubmit);
-   
-   effectList.addEventListener('focus', (evt) => {
-    useEffects(evt.target)
-   }, {capture: true}); 
+   effectList.addEventListener('focus', changeOfEffects,{capture: true}); 
   };
+ 
+   const changeOfEffects = (evt) => {
+    useEffects(evt.target)
+   };
 
  const handleHashtag = (evt) => {
    hashtagInput.setCustomValidity('');
@@ -479,17 +480,13 @@ const textDescription = upLoadOverlay.querySelector('.text__description');
   document.removeEventListener('keydown', handleImageEditorCloseKeyDown);
   hashtagInput.removeEventListener('input', handleHashtag);  
   uploadForm.removeEventListener('submit', handleForSubmit);
-  
-  effectList.removeEventListener('focus', (evt) => {
-   useEffects(evt.target)
-  }); 
+  effectList.removeEventListener('focus', changeOfEffects,{capture: true}); 
  };
 
  const closeEditForm = () => {
   upLoadInput.value = '';
   hashtagInput.value ='';
   textDescription.value = '';
-
   
    hideElement(upLoadOverlay);
    removeEditFormListeners();
