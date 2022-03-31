@@ -15,7 +15,7 @@ const MAX_HASHTAG_NUMBER = 5;
 const MAX_HASHTAG_LENGTH = 20;
 const SEPARATOR = " ";
 
-const KEY = { 
+const Key = { 
  ENTER: 'Enter',
  ESCAPE: 'Escape',
 };
@@ -137,13 +137,13 @@ const Effect = {
 const picturesData = [];
 
 const isEnterEvent = (evt, callback) => {
-  if (evt.code === KEY.ENTER) {
+  if (evt.code === Key.ENTER) {
     callback(evt);
   }
 };
 
 const isEscapeEvent = (evt, callback) => {
-  if (evt.code === KEY.ESCAPE) {
+  if (evt.code === Key.ESCAPE) {
     callback(evt);
   }
 };
