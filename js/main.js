@@ -1,5 +1,7 @@
 'use strict';
  
+alert('привет захар');
+
 const MAX_LIKES_NUMBER = 200;
 const MIN_LIKES_NUMBER = 15;
 const MAX_COMMENTS_NUMBER = 21;
