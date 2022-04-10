@@ -1,6 +1,5 @@
 'use strict';
  
-alert('привет захар');
 
 const MAX_LIKES_NUMBER = 200;
 const MIN_LIKES_NUMBER = 15;
@@ -366,6 +365,7 @@ const depth = upLoadEffect.querySelector('.effect-level__depth');
 const effectList = upLoadOverlay.querySelector('.effects__list');
 const hashtagInput = upLoadOverlay.querySelector('.text__hashtags');
 const textDescription = upLoadOverlay.querySelector('.text__description');
+const effectLine = upLoadEffect.querySelector('.effect-level__line');
 
  const handleLoadFile = () => {
   showElement(upLoadOverlay);
@@ -379,40 +379,81 @@ const textDescription = upLoadOverlay.querySelector('.text__description');
   };
 
  upLoadInput.addEventListener('change', handleLoadFile);
+ 
+ let selectedEffect = {};
 
- const useEffects = (currentElement) => {
-  if (currentElement.value === 'none') {
-    hideElement(upLoadEffect);
-   } else {
-    showElement(upLoadEffect);
-  };
+   const addEffectData = (selectedEffect, filterValue) => {
+     const proportion = (effect, value) => {
+       const payment = (effect.maxValue - effect.minValue)/100;
+       return (payment * value) + effect.minValue;}
 
-   const addEffectData = (currentElement) => {
+       upLoadPreview.style.filter =`${selectedEffect.property}(${proportion(selectedEffect, filterValue)}${selectedEffect.measure})`;
+       upLoadPreview.classList.add(`effects__preview--${selectedEffect.className}`);
+     };
+   
+     const setSliderValue = (value) => {
+      pin.style.left = `${value}%`;
+      depth.style.width = `${value}%`;
+      levelValue.setAttribute('value', value)
+    };
+
+     const useEffects = (currentElement) => {
+      if (currentElement.value === 'none') {
+        hideElement(upLoadEffect);
+       } else {
+        showElement(upLoadEffect);
+      };
+    
+     deleteOldEffects();
+
      const effect = Effect[currentElement.value.toUpperCase()];
     
     upLoadPreview.style.filter = `${effect.property}
                                    (${effect.maxValue}
                                     ${effect.measure})`;
-    upLoadPreview.classList.add(effect.className)
-   };
+    upLoadPreview.classList.add(effect.className);
+   
+    selectedEffect = effect;
 
-  const setSliderValue = (value) => {
-     pin.style.left = `${value}%`;
-     depth.style.width = `${value}%`;
-     levelValue.setAttribute('value', value)
-   };
-
-   deleteOldEffects();
-   addEffectData(currentElement);
-   setSliderValue(MAX_SLIDER_VALUE);
-  };
+    setSliderValue(MAX_SLIDER_VALUE);
+    };
  
+const onMouseDown = (evt) => {
+  evt.preventDefault();
+ 
+  const onMouseMove = (evt) => {
+    let offSet = evt.clientX - effectLine.getBoundingClientRect().left ;
+    let rightEdge = effectLine.offsetWidth;
+
+    if (offSet < 0) {
+      offSet = 0;
+    };
+
+     if (offSet > rightEdge) {
+       offSet = rightEdge;
+     };
+
+    const pinPosition = offSet*100/rightEdge;
+    setSliderValue(pinPosition);
+    addEffectData(selectedEffect,pinPosition)
+    };
+
+    const onMouseUp = () => {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+};
+
  const setEditFormListeners = () => {
    upLoadCancel.addEventListener('click', handleImageEditorCloseClick);
    upLoadOverlay.addEventListener('click', closeTheWindowOutside);
    document.addEventListener('keydown', handleImageEditorCloseKeyDown);
    hashtagInput.addEventListener('input', handleHashtag);  
    uploadForm.addEventListener('submit',handleForSubmit);
+   pin.addEventListener('mousedown', onMouseDown);
    effectList.addEventListener('focus', changeOfEffects,{capture: true}); 
   };
  
@@ -482,6 +523,7 @@ const textDescription = upLoadOverlay.querySelector('.text__description');
   document.removeEventListener('keydown', handleImageEditorCloseKeyDown);
   hashtagInput.removeEventListener('input', handleHashtag);  
   uploadForm.removeEventListener('submit', handleForSubmit);
+  pin.removeEventListener('mousedown', onMouseDown);
   effectList.removeEventListener('focus', changeOfEffects,{capture: true}); 
  };
 
