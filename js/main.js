@@ -429,13 +429,14 @@ const onMouseDown = (evt) => {
       offSet = 0;
     };
 
-     if (offSet > rightEdge) {
+    if (offSet > rightEdge) {
        offSet = rightEdge;
-     };
+    };
 
     const pinPosition = offSet*100/rightEdge;
     setSliderValue(pinPosition);
     addEffectData(selectedEffect,pinPosition)
+    
     };
 
     const onMouseUp = () => {
@@ -453,12 +454,12 @@ const onMouseDown = (evt) => {
    document.addEventListener('keydown', handleImageEditorCloseKeyDown);
    hashtagInput.addEventListener('input', handleHashtag);  
    uploadForm.addEventListener('submit',handleForSubmit);
-   pin.addEventListener('mousedown', onMouseDown);
    effectList.addEventListener('focus', changeOfEffects,{capture: true}); 
+   upLoadEffect.addEventListener('mousedown',onMouseDown);
   };
  
    const changeOfEffects = (evt) => {
-    useEffects(evt.target)
+    useEffects(evt.target);
    };
 
  const handleHashtag = (evt) => {
@@ -523,8 +524,8 @@ const onMouseDown = (evt) => {
   document.removeEventListener('keydown', handleImageEditorCloseKeyDown);
   hashtagInput.removeEventListener('input', handleHashtag);  
   uploadForm.removeEventListener('submit', handleForSubmit);
-  pin.removeEventListener('mousedown', onMouseDown);
   effectList.removeEventListener('focus', changeOfEffects,{capture: true}); 
+  upLoadEffect.removeEventListener('mousedown', onMouseDown);
  };
 
  const closeEditForm = () => {
