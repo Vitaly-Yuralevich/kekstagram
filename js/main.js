@@ -121,8 +121,8 @@ const Effect = {
   PHOBOS: {
     className: 'effects__preview--phobos',
     property: 'blur',
-    maxValue: '5',
-    minValue: '3',
+    maxValue: 5,
+    minValue: 0,
     measure: 'px'
   },
 
@@ -357,8 +357,8 @@ const uploadForm = document.querySelector('.img-upload__form');
 const upLoadInput = uploadForm.querySelector('.img-upload__input');
 const upLoadOverlay = uploadForm.querySelector('.img-upload__overlay');
 const upLoadPreview = upLoadOverlay.querySelector('.img-upload__preview img');
-const upLoadEffect = upLoadOverlay.querySelector('.img-upload__effect-level')
-const upLoadCancel = upLoadOverlay.querySelector('.img-upload__cancel')
+const upLoadEffect = upLoadOverlay.querySelector('.img-upload__effect-level');
+const upLoadCancel = upLoadOverlay.querySelector('.img-upload__cancel');
 const levelValue = upLoadEffect.querySelector('.effect-level__value');
 const pin = upLoadEffect.querySelector('.effect-level__pin');
 const depth = upLoadEffect.querySelector('.effect-level__depth');
@@ -383,11 +383,11 @@ const effectLine = upLoadEffect.querySelector('.effect-level__line');
  let selectedEffect = {};
 
    const addEffectData = (selectedEffect, filterValue) => {
-     const proportion = (effect, value) => {
-       const payment = (effect.maxValue - effect.minValue)/100;
-       return (payment * value) + effect.minValue;}
+     const levelRatio = (effect, value) => {
+       const ratio = (effect.maxValue - effect.minValue)/100;
+       return (ratio * value) + effect.minValue;}
 
-       upLoadPreview.style.filter =`${selectedEffect.property}(${proportion(selectedEffect, filterValue)}${selectedEffect.measure})`;
+       upLoadPreview.style.filter =`${selectedEffect.property}(${levelRatio(selectedEffect, filterValue)}${selectedEffect.measure})`;
        upLoadPreview.classList.add(`effects__preview--${selectedEffect.className}`);
      };
    
@@ -418,10 +418,10 @@ const effectLine = upLoadEffect.querySelector('.effect-level__line');
     setSliderValue(MAX_SLIDER_VALUE);
     };
  
-const onMouseDown = (evt) => {
+const handleMouseDown = (evt) => {
   evt.preventDefault();
  
-  const onMouseMove = (evt) => {
+  const handleMouseMove = (evt) => {
     let offSet = evt.clientX - effectLine.getBoundingClientRect().left ;
     let rightEdge = effectLine.offsetWidth;
 
@@ -433,19 +433,19 @@ const onMouseDown = (evt) => {
        offSet = rightEdge;
     };
 
-    const pinPosition = offSet*100/rightEdge;
+    const pinPosition = offSet * 100 / rightEdge;
     setSliderValue(pinPosition);
-    addEffectData(selectedEffect,pinPosition)
-    
+    addEffectData(selectedEffect,pinPosition);
     };
 
-    const onMouseUp = () => {
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
+    const handleMouseUp = () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      upLoadOverlay.removeEventListener('click', closeTheWindowOutside);
     };
 
-  document.addEventListener('mousemove', onMouseMove);
-  document.addEventListener('mouseup', onMouseUp);
+  document.addEventListener('mousemove', handleMouseMove);
+  document.addEventListener('mouseup', handleMouseUp);
 };
 
  const setEditFormListeners = () => {
@@ -455,7 +455,7 @@ const onMouseDown = (evt) => {
    hashtagInput.addEventListener('input', handleHashtag);  
    uploadForm.addEventListener('submit',handleForSubmit);
    effectList.addEventListener('focus', changeOfEffects,{capture: true}); 
-   upLoadEffect.addEventListener('mousedown',onMouseDown);
+   upLoadEffect.addEventListener('mousedown',handleMouseDown);
   };
  
    const changeOfEffects = (evt) => {
@@ -495,7 +495,6 @@ const onMouseDown = (evt) => {
      errors.noOneSymbol = errors.noOneSymbol || (hashtag === '#');
      errors.space = errors.space || (hashtag.includes('#', 1));
      errors.longHashtag = errors.longHashtag || (hashtag.length > MAX_HASHTAG_LENGTH);
-  
     });
 
    const getHashtagRepeatErros = (hashtags) => {
@@ -514,7 +513,7 @@ const onMouseDown = (evt) => {
       hashtagPrompt += `${errorsToPrompt[element]} ${SEPARATOR}`;
      }
    }
-
+   document.removeEventListener('keydown', handleImageEditorCloseKeyDown);
    return hashtagPrompt;
   };
 
@@ -525,7 +524,7 @@ const onMouseDown = (evt) => {
   hashtagInput.removeEventListener('input', handleHashtag);  
   uploadForm.removeEventListener('submit', handleForSubmit);
   effectList.removeEventListener('focus', changeOfEffects,{capture: true}); 
-  upLoadEffect.removeEventListener('mousedown', onMouseDown);
+  upLoadEffect.removeEventListener('mousedown', handleMouseDown);
  };
 
  const closeEditForm = () => {
@@ -544,7 +543,7 @@ const handleImageEditorCloseClick = () => {
 
 const handleForSubmit = (evt) =>{
   evt.preventDefault();
-};
+ };
 
 const closeTheWindowOutside = (evt) => {
   if (evt.target.className === 'img-upload__overlay'){
