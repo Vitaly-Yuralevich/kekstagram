@@ -417,36 +417,31 @@ const effectLine = upLoadEffect.querySelector('.effect-level__line');
 
     setSliderValue(MAX_SLIDER_VALUE);
     };
- 
-const handleMouseDown = (evt) => {
+
+ let offSet;
+
+pin.onpointerdown = (evt) => {
   evt.preventDefault();
- 
-  const handleMouseMove = (evt) => {
-    let offSet = evt.clientX - effectLine.getBoundingClientRect().left ;
-    let rightEdge = effectLine.offsetWidth;
 
-    if (offSet < 0) {
-      offSet = 0;
+   offSet = evt.clientX - pin.getBoundingClientRect().left;
+  pin.setPointerCapture(evt.pointerId);
+};
+  pin.onpointermove = (evt) => {
+    let newLeft = evt.clientX - offSet - effectLine.getBoundingClientRect().left;
+  
+    if (newLeft < 0) {
+      newLeft = 0;
+    };
+    
+    let rightEdge = effectLine.offsetWidth - pin.offsetWidth;
+    if (newLeft > rightEdge) {
+       newLeft = rightEdge;
     };
 
-    if (offSet > rightEdge) {
-       offSet = rightEdge;
-    };
-
-    const pinPosition = offSet * 100 / rightEdge;
+    const pinPosition = newLeft * 100 / rightEdge;
     setSliderValue(pinPosition);
     addEffectData(selectedEffect,pinPosition);
     };
-
-    const handleMouseUp = () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-      upLoadOverlay.removeEventListener('click', closeTheWindowOutside);
-    };
-
-  document.addEventListener('mousemove', handleMouseMove);
-  document.addEventListener('mouseup', handleMouseUp);
-};
 
  const setEditFormListeners = () => {
    upLoadCancel.addEventListener('click', handleImageEditorCloseClick);
@@ -454,8 +449,7 @@ const handleMouseDown = (evt) => {
    document.addEventListener('keydown', handleImageEditorCloseKeyDown);
    hashtagInput.addEventListener('input', handleHashtag);  
    uploadForm.addEventListener('submit',handleForSubmit);
-   effectList.addEventListener('focus', changeOfEffects,{capture: true}); 
-   upLoadEffect.addEventListener('mousedown',handleMouseDown);
+   effectList.addEventListener('focus', changeOfEffects,{capture: true});
   };
  
    const changeOfEffects = (evt) => {
@@ -513,7 +507,7 @@ const handleMouseDown = (evt) => {
       hashtagPrompt += `${errorsToPrompt[element]} ${SEPARATOR}`;
      }
    }
-   document.removeEventListener('keydown', handleImageEditorCloseKeyDown);
+   hashtagInput.removeEventListener('keydown', handleImageEditorCloseKeyDown);
    return hashtagPrompt;
   };
 
@@ -524,7 +518,6 @@ const handleMouseDown = (evt) => {
   hashtagInput.removeEventListener('input', handleHashtag);  
   uploadForm.removeEventListener('submit', handleForSubmit);
   effectList.removeEventListener('focus', changeOfEffects,{capture: true}); 
-  upLoadEffect.removeEventListener('mousedown', handleMouseDown);
  };
 
  const closeEditForm = () => {
