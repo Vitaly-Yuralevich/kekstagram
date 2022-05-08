@@ -323,7 +323,7 @@ const renderBigPicture = (pictureID) => {
         };
 
         const comment = createComment();
-        comment.append(createNewAvatar(),createNewMessage());
+        comment.append(createNewAvatar(), createNewMessage());
         
         return comment;
       };
@@ -383,11 +383,11 @@ const effectLine = upLoadEffect.querySelector('.effect-level__line');
  let selectedEffect = {};
 
    const addEffectData = (selectedEffect, filterValue) => {
-     const levelRatio = (effect, value) => {
+     const countingRatio = (effect, value) => {
        const ratio = (effect.maxValue - effect.minValue)/100;
        return (ratio * value) + effect.minValue;}
 
-       upLoadPreview.style.filter =`${selectedEffect.property}(${levelRatio(selectedEffect, filterValue)}${selectedEffect.measure})`;
+       upLoadPreview.style.filter =`${selectedEffect.property}(${countingRatio(selectedEffect, filterValue)}${selectedEffect.measure})`;
        upLoadPreview.classList.add(`effects__preview--${selectedEffect.className}`);
      };
    
@@ -418,15 +418,11 @@ const effectLine = upLoadEffect.querySelector('.effect-level__line');
     setSliderValue(MAX_SLIDER_VALUE);
     };
 
- let offSet;
-
-pin.onpointerdown = (evt) => {
+const handleMouseDown = (evt) => {
   evt.preventDefault();
-
-   offSet = evt.clientX - pin.getBoundingClientRect().left;
-  pin.setPointerCapture(evt.pointerId);
-};
-  pin.onpointermove = (evt) => {
+   let offSet = evt.clientX - pin.getBoundingClientRect().left;
+ 
+const handleMouseMove = (evt) => {
     let newLeft = evt.clientX - offSet - effectLine.getBoundingClientRect().left;
   
     if (newLeft < 0) {
@@ -434,6 +430,7 @@ pin.onpointerdown = (evt) => {
     };
     
     let rightEdge = effectLine.offsetWidth - pin.offsetWidth;
+    
     if (newLeft > rightEdge) {
        newLeft = rightEdge;
     };
@@ -441,6 +438,19 @@ pin.onpointerdown = (evt) => {
     const pinPosition = newLeft * 100 / rightEdge;
     setSliderValue(pinPosition);
     addEffectData(selectedEffect,pinPosition);
+  };
+
+    const handleMouseUp = (evt) => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      if (evt.target.className === 'img-upload__overlay'){
+        upLoadOverlay.removeEventListener('click', closeTheWindowOutside);
+        } else  {
+          upLoadOverlay.addEventListener('click', closeTheWindowOutside)}
+    };
+   
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
     };
 
  const setEditFormListeners = () => {
@@ -450,6 +460,7 @@ pin.onpointerdown = (evt) => {
    hashtagInput.addEventListener('input', handleHashtag);  
    uploadForm.addEventListener('submit',handleForSubmit);
    effectList.addEventListener('focus', changeOfEffects,{capture: true});
+   upLoadEffect.addEventListener('mousedown', handleMouseDown);
   };
  
    const changeOfEffects = (evt) => {
@@ -518,11 +529,12 @@ pin.onpointerdown = (evt) => {
   hashtagInput.removeEventListener('input', handleHashtag);  
   uploadForm.removeEventListener('submit', handleForSubmit);
   effectList.removeEventListener('focus', changeOfEffects,{capture: true}); 
+  upLoadEffect.removeEventListener('mousedown', handleMouseDown);
  };
 
  const closeEditForm = () => {
   upLoadInput.value = '';
-  hashtagInput.value ='';
+  hashtagInput.value = '';
   textDescription.value = '';
   
    hideElement(upLoadOverlay);
@@ -534,7 +546,7 @@ const handleImageEditorCloseClick = () => {
   closeEditForm();
  }; 
 
-const handleForSubmit = (evt) =>{
+const handleForSubmit = (evt) => {
   evt.preventDefault();
  };
 
