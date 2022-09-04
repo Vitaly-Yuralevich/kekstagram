@@ -111,7 +111,5 @@
 
   generatePicturesData();
 
-  window.data = {
-    picturesData
-  };
+  window.data = {picturesData};
 })();

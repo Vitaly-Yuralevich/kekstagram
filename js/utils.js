@@ -2,8 +2,8 @@
   "use strict";
 
   const Key = {
-    ENTER: "Enter",
-    ESCAPE: "Escape",
+    ENTER: 'Enter',
+    ESCAPE: 'Escape',
   };
 
   const isEnterEvent = (evt, callback) => {
@@ -19,15 +19,15 @@
   };
 
   const clearElementContents = (element) => {
-    element.innerHTML = "";
+    element.innerHTML = '';
   };
 
   const showElement = (element) => {
-    element.classList.remove("hidden");
+    element.classList.remove('hidden');
   };
 
   const hideElement = (element) => {
-    element.classList.add("hidden");
+    element.classList.add('hidden');
   };
 
   window.utils = {

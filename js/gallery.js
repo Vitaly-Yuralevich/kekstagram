@@ -18,12 +18,11 @@
       };
     
       const getPictureDataNumber = (evt) => {
-        return evt.currentTarget.getAttribute("data-number");
+        return evt.currentTarget.getAttribute('data-number');
       };
       
       const handlePictureClick = (evt) => {
          window.bigPictures.renderBigPicture(getPictureDataNumber(evt));
-          picture.removeEventListener("click", handlePictureClick);
         };
       
         const handlePictureKeyDown = (downEvt) => {
@@ -32,7 +31,7 @@
            window.renderBigPicture(getPictureDataNumber(evt));
           });
       
-          picture.removeEventListener("keydown", handlePictureKeyDown);
+          picture.removeEventListener('keydown', handlePictureKeyDown);
         };
       
       window.data.picturesData.forEach((picture, index) => {
@@ -41,10 +40,10 @@
     
       picturesContainer.append(fragment);  
     
-      const miniaturs = document.querySelectorAll(".picture");
+      const miniaturs = document.querySelectorAll('.picture');
       miniaturs.forEach((picture) => {
-          picture.addEventListener("click", handlePictureClick);
-          picture.addEventListener("keydown", handlePictureKeyDown);
+          picture.addEventListener('click', handlePictureClick);
+          picture.addEventListener('keydown', handlePictureKeyDown);
         })
     };
     renderAllPictures();

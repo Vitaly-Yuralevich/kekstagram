@@ -4,12 +4,12 @@
 const MAX_SLIDER_VALUE = 100;
 const MAX_HASHTAG_NUMBER = 5;
 const MAX_HASHTAG_LENGTH = 20;
-const SEPARATOR = " ";
+const SEPARATOR = ' ';
 
 const Effect = {
 
     NONE: {
-      className: 'effect__preview--none',
+      clName: 'none',
       property: 'none',
       maxValue: null,
       minValue: null,
@@ -17,7 +17,7 @@ const Effect = {
     },
   
     CHROME: {
-      className: 'effects__preview--chrome',
+      clName: 'chrome',
       property: 'grayscale',
       maxValue: 1,
       minValue: 0,
@@ -25,7 +25,7 @@ const Effect = {
     },
   
     SEPIA: {
-      className: 'effects__preview--sepia',
+      clName: 'sepia',
       property: 'sepia',
       maxValue: 1,
       minValue: 0,
@@ -33,7 +33,7 @@ const Effect = {
     },
   
     MARVIN: {
-      className: 'effects__preview--marvin',
+      clName: 'marvin',
       property: 'invert',
       maxValue: 100,
       minValue: 0,
@@ -41,7 +41,7 @@ const Effect = {
     },
   
     PHOBOS: {
-      className: 'effects__preview--phobos',
+      clName: 'phobos',
       property: 'blur',
       maxValue: 5,
       minValue: 0,
@@ -49,7 +49,7 @@ const Effect = {
     },
   
     HEAT: {
-      className: 'effects__preview--heat',
+      clName: 'heat',
       property: 'brightness',
       maxValue: 3,
       minValue: 1,
@@ -78,9 +78,9 @@ const loadNewImage = () => {
      setEditFormListeners();
      };
    
-    const deleteOldEffects = () => {
+    const deleteEffect = () => {
      upLoadPreview.style.filter = '';
-     upLoadPreview.className = '';
+     upLoadPreview.clName = '';
      };
    
     upLoadInput.addEventListener('change', handleLoadFile);
@@ -94,7 +94,7 @@ const loadNewImage = () => {
       };
    
      upLoadPreview.style.filter = `${selectedEffect.property}(${getLevelRatio(selectedEffect, filterValue)}${selectedEffect.measure})`;
-     upLoadPreview.classList.add(`effects__preview--${selectedEffect.className}`);
+     upLoadPreview.classList.add(`selectedEffect.clName`);
      };
       
     const setSliderValue = (value) => {
@@ -110,14 +110,12 @@ const loadNewImage = () => {
        window.utils.showElement(upLoadEffect);
      };
        
-     deleteOldEffects();
+     deleteEffect();
    
      const effect = Effect[currentElement.value.toUpperCase()];
        
-     upLoadPreview.style.filter = `${effect.property}
-                                      (${effect.maxValue}
-                                       ${effect.measure})`;
-     upLoadPreview.classList.add(effect.className);
+     upLoadPreview.style.filter = `${effect.property}(${effect.maxValue}${effect.measure})`;
+     upLoadPreview.classList.add(effect.clname);
       
      selectedEffect = effect;
    
@@ -146,7 +144,7 @@ const loadNewImage = () => {
       addEffectData(selectedEffect, pinPosition);
       };
    
-      const handleMouseUp = (evt) => {
+      const handleMouseUp = () => {
        document.removeEventListener('mousemove', handleMouseMove);
        document.removeEventListener('mouseup', handleMouseUp);
       };
@@ -234,14 +232,17 @@ const loadNewImage = () => {
      upLoadEffect.removeEventListener('mousedown', handleMouseDown);
      };
    
+     const exitForm = () =>{
+      upLoadInput.value = '';
+      hashtagInput.value = '';
+      textDescription.value = '';
+     };
+
     const closeEditForm = () => {
-     upLoadInput.value = '';
-     hashtagInput.value = '';
-     textDescription.value = '';
-     
      window.utils.hideElement(upLoadOverlay);
      removeEditFormListeners();
-     deleteOldEffects();
+     deleteEffect();
+     exitForm();
      };
    
     const handleImageEditorCloseClick = () => {

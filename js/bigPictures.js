@@ -98,8 +98,8 @@ const renderBigPicture = (pictureID) => {
     };
     
     const hideCommentsCounter = () => {
-      document.querySelector(".social__comment-count").classList.add("visually-hidden");
-      document.querySelector(".comments-loader").classList.add("visually-hidden");
+      document.querySelector('.social__comment-count').classList.add('visually-hidden');
+      document.querySelector('.comments-loader').classList.add('visually-hidden');
     } ;
   
     renderSocialComments();
@@ -109,8 +109,6 @@ const renderBigPicture = (pictureID) => {
     setBigPictureListeners();
 };
 
-window.bigPictures = {
-  renderBigPicture
-};
+window.bigPictures = {renderBigPicture};
 
 })();
