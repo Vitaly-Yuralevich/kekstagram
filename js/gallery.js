@@ -31,7 +31,6 @@
            window.renderBigPicture(getPictureDataNumber(evt));
           });
       
-          picture.removeEventListener('keydown', handlePictureKeyDown);
         };
       
       window.data.picturesData.forEach((picture, index) => {
