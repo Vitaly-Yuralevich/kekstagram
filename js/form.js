@@ -9,7 +9,7 @@ const SEPARATOR = ' ';
 const Effect = {
 
     NONE: {
-      className: 'none',
+      name: 'none',
       property: 'none',
       maxValue: null,
       minValue: null,
@@ -17,7 +17,7 @@ const Effect = {
     },
   
     CHROME: {
-      className: 'chrome',
+      name: 'chrome',
       property: 'grayscale',
       maxValue: 1,
       minValue: 0,
@@ -25,7 +25,7 @@ const Effect = {
     },
   
     SEPIA: {
-      className: 'sepia',
+      name: 'sepia',
       property: 'sepia',
       maxValue: 1,
       minValue: 0,
@@ -33,7 +33,7 @@ const Effect = {
     },
   
     MARVIN: {
-      className: 'marvin',
+      name: 'marvin',
       property: 'invert',
       maxValue: 100,
       minValue: 0,
@@ -41,7 +41,7 @@ const Effect = {
     },
   
     PHOBOS: {
-      className: 'phobos',
+      name: 'phobos',
       property: 'blur',
       maxValue: 5,
       minValue: 0,
@@ -49,7 +49,7 @@ const Effect = {
     },
   
     HEAT: {
-      className: 'heat',
+      name: 'heat',
       property: 'brightness',
       maxValue: 3,
       minValue: 1,
@@ -94,7 +94,7 @@ const loadNewImage = () => {
       };
    
      upLoadPreview.style.filter = `${selectedEffect.property}(${getLevelRatio(selectedEffect, filterValue)}${selectedEffect.measure})`;
-     upLoadPreview.classList.add(`selectedEffect.className`);
+     upLoadPreview.classList.add(`effects__preview--${selectedEffect.className}`); 
      };
       
     const setSliderValue = (value) => {
@@ -115,7 +115,7 @@ const loadNewImage = () => {
      const effect = Effect[currentElement.value.toUpperCase()];
        
      upLoadPreview.style.filter = `${effect.property}(${effect.maxValue}${effect.measure})`;
-     upLoadPreview.classList.add(effect.className);
+     upLoadPreview.classList.add(effect.name);
       
      selectedEffect = effect;
    
