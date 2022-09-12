@@ -9,7 +9,7 @@ const SEPARATOR = ' ';
 const Effect = {
 
     NONE: {
-      name: 'none',
+      className: 'none',
       property: 'none',
       maxValue: null,
       minValue: null,
@@ -17,7 +17,7 @@ const Effect = {
     },
   
     CHROME: {
-      name: 'chrome',
+      className: 'chrome',
       property: 'grayscale',
       maxValue: 1,
       minValue: 0,
@@ -25,7 +25,7 @@ const Effect = {
     },
   
     SEPIA: {
-      name: 'sepia',
+      className: 'sepia',
       property: 'sepia',
       maxValue: 1,
       minValue: 0,
@@ -33,7 +33,7 @@ const Effect = {
     },
   
     MARVIN: {
-      name: 'marvin',
+      className: 'marvin',
       property: 'invert',
       maxValue: 100,
       minValue: 0,
@@ -41,7 +41,7 @@ const Effect = {
     },
   
     PHOBOS: {
-      name: 'phobos',
+      className: 'phobos',
       property: 'blur',
       maxValue: 5,
       minValue: 0,
@@ -49,7 +49,7 @@ const Effect = {
     },
   
     HEAT: {
-      name: 'heat',
+      className: 'heat',
       property: 'brightness',
       maxValue: 3,
       minValue: 1,
@@ -80,7 +80,7 @@ const loadNewImage = () => {
    
     const deleteEffect = () => {
      upLoadPreview.style.filter = '';
-     upLoadPreview.name = '';
+     upLoadPreview.className = '';
      };
    
     upLoadInput.addEventListener('change', handleLoadFile);
@@ -94,7 +94,7 @@ const loadNewImage = () => {
       };
    
      upLoadPreview.style.filter = `${selectedEffect.property}(${getLevelRatio(selectedEffect, filterValue)}${selectedEffect.measure})`;
-     upLoadPreview.classList.add(`selectedEffect.name`);
+     upLoadPreview.classList.add(`selectedEffect.className`);
      };
       
     const setSliderValue = (value) => {
@@ -115,7 +115,7 @@ const loadNewImage = () => {
      const effect = Effect[currentElement.value.toUpperCase()];
        
      upLoadPreview.style.filter = `${effect.property}(${effect.maxValue}${effect.measure})`;
-     upLoadPreview.classList.add(effect.name);
+     upLoadPreview.classList.add(effect.className);
       
      selectedEffect = effect;
    
@@ -232,7 +232,7 @@ const loadNewImage = () => {
      upLoadEffect.removeEventListener('mousedown', handleMouseDown);
      };
    
-     const clearTheField = () =>{
+     const clearFields = () =>{
       upLoadInput.value = '';
       hashtagInput.value = '';
       textDescription.value = '';
@@ -242,7 +242,7 @@ const loadNewImage = () => {
      window.utils.hideElement(upLoadOverlay);
      removeEditFormListeners();
      deleteEffect();
-     clearTheField();
+     clearFields();
      };
    
     const handleImageEditorCloseClick = () => {
