@@ -94,7 +94,7 @@ const loadNewImage = () => {
       };
    
      upLoadPreview.style.filter = `${selectedEffect.property}(${getLevelRatio(selectedEffect, filterValue)}${selectedEffect.measure})`;
-     upLoadPreview.classList.add(`effects__preview--${selectedEffect.className}`); 
+     upLoadPreview.className = 'effects__preview--' + selectedEffect.name;
      };
       
     const setSliderValue = (value) => {
