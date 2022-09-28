@@ -94,7 +94,6 @@ const loadNewImage = () => {
       };
    
      upLoadPreview.style.filter = `${selectedEffect.property}(${getLevelRatio(selectedEffect, filterValue)}${selectedEffect.measure})`;
-     upLoadPreview.classList.add(`effects__preview--${selectedEffect.name}`);
      };
       
     const setSliderValue = (value) => {
@@ -115,7 +114,7 @@ const loadNewImage = () => {
      const effect = Effect[currentElement.value.toUpperCase()];
        
      upLoadPreview.style.filter = `${effect.property}(${effect.maxValue}${effect.measure})`;
-      
+     upLoadPreview.classList.add(`effects__preview--${selectedEffect.name}`);
      selectedEffect = effect;
    
      setSliderValue(MAX_SLIDER_VALUE);
