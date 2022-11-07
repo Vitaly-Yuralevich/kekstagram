@@ -114,8 +114,7 @@ const loadNewImage = () => {
      const effect = Effect[currentElement.value.toUpperCase()];
        
      upLoadPreview.style.filter = `${effect.property}(${effect.maxValue}${effect.measure})`;
-     upLoadPreview.classList.add(`effects__preview--${selectedEffect.name}`);
-     selectedEffect = effect;
+     upLoadPreview.classList.add(`effects__preview--${effect.name}`);
    
      setSliderValue(MAX_SLIDER_VALUE);
      };
