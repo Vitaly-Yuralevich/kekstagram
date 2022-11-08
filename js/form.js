@@ -112,7 +112,7 @@ const loadNewImage = () => {
      deleteEffect();
    
      const effect = Effect[currentElement.value.toUpperCase()];
-       
+       selectedEffect = effect;
      upLoadPreview.style.filter = `${effect.property}(${effect.maxValue}${effect.measure})`;
      upLoadPreview.classList.add(`effects__preview--${effect.name}`);
    
