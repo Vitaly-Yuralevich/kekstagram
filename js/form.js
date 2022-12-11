@@ -102,8 +102,10 @@ const loadNewImage = () => {
      levelValue.setAttribute('value', value)
      };
    
-    const useEffects = (currentElement) => {
-     if (currentElement.value === 'none') {
+    const useEffects = (filter) => {
+      selectedEffect = Effect[filter.value.toUpperCase()];
+      
+     if (selectedEffect.value === 'none') {
        window.utils.hideElement(upLoadEffect);
      } else {
        window.utils.showElement(upLoadEffect);
@@ -111,10 +113,9 @@ const loadNewImage = () => {
        
      deleteEffect();
    
-     const effect = Effect[currentElement.value.toUpperCase()];
-       selectedEffect = effect;
-     upLoadPreview.style.filter = `${effect.property}(${effect.maxValue}${effect.measure})`;
-     upLoadPreview.classList.add(`effects__preview--${effect.name}`);
+     
+     upLoadPreview.style.filter = `${selectedEffect.property}(${selectedEffect.maxValue}${selectedEffect.measure})`;
+     upLoadPreview.classList.add(`effects__preview--${selectedEffect.name}`);
    
      setSliderValue(MAX_SLIDER_VALUE);
      };
